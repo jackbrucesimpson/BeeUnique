@@ -69,7 +69,7 @@ int Bee::append_frame_classified_classify_bee (frame_classified fc) {
                     return self.recent_classifications[i].classified
 
             self.merge_recent_points_classifications()
-            return UNKNOWN_CLASS
+            return UNKNOWN_CLASSvoid append_flattened_28x28_tag_matrices (std::vector<int> flattened_28x28_tag_matrix);
 
         return UNKNOWN_CLAS
 }
@@ -85,4 +85,12 @@ void Bee::merge_recent_points_classifications () {
         self.classifications.insert(self.classifications.end(), self.recent_classifications.begin(), self.recent_classifications.end())
         self.recent_path.clear()
         self.recent_classifications.clear(
+}
+
+void append_flattened_28x28_tag_matrices (std::vector<int> flattened_28x28_tag_matrix) {
+    flattened_28x28_tag_matrices.push_back(flattened_28x28_tag_matrix)
+}
+
+<std::vector<std::vector<int>> get_flattened_28x28_tag_matrices () {
+    return flattened_28x28_tag_matrices;
 }

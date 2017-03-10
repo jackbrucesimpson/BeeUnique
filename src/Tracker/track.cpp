@@ -173,6 +173,10 @@ std::vector<bee_frame_data> Track::get_tracked_bees_current_frame (int current_f
         return bee_point_classifications_current_frame
 }
 
+void training_track_frame (std::vector<point> contour_locations, std::vector<loc_index_classified> classified_loc_indexes, std::vector<int> flattened_28x28_tag_matrix) {
+    
+}
+
 float Track::euclidian_distance (point p1, point p2) {
     const float delta_x = p1.x - p2.x;
     const float delta_y = p1.y - p2.y;

@@ -15,6 +15,8 @@ public:
 
     void track_frame (std::vector<point> contour_locations, std::vector<int> contour_classifications);
 
+    void training_track_frame (std::vector<point> contour_locations, std::vector<loc_index_classified> classified_loc_indexes, std::vector<int> flattened_28x28_tag_matrix);
+
     int extract_contour_classifications (std::vector<loc_index_class> classified_loc_indexes, int num_contours);
 
     bool identify_past_location (std::vector<point> contour_locations, int contour_classification, int contour_index);
