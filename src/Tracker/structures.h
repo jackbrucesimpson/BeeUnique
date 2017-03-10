@@ -17,7 +17,7 @@ struct frame_classified {
     int classified;
 };
 
-struct bee_data {
+struct bee_frame_data {
     float x;
     float y;
     int bee_classified;

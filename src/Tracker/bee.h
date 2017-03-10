@@ -10,27 +10,37 @@ class Bee {
 public:
     Bee(int id);
 
-    void append_point(point p);
+    void append_point (point p);
 
-    point get_last_point();
+    point get_last_point ();
 
-    void set_class_classified(int new_class);
+    void set_class_classified (int new_class);
 
-    int get_class_classified() const;
+    int get_class_classified () const;
 
-    int get_id() const;
+    int get_id () const;
 
-    std::vector<point> get_path();
+    std::vector<point> get_path ();
 
-    std::vector<point> get_recent_path();
+    std::vector<point> get_recent_path ();
 
-    std::vector<frame_classified> get_classifications();
+    std::vector<frame_classified> get_classifications ();
 
-    std::vector<frame_classified> get_recent_classifications();
+    std::vector<frame_classified> get_recent_classifications ();
 
-    bool get_is_deleted();
+    bool get_is_deleted ();
 
-    void delete_bee();
+    void delete_bee ();
+
+    //
+
+    void transfer_bee_path_classifications (std::vector<point> new_points, std::vector<frame_classified> new_frame_classifieds);
+
+    int append_frame_classified_classify_bee (frame_classified fc);
+
+    void delete_recent_points_classifications ();
+
+    void merge_recent_points_classifications ();
 
 private:
     int identity;
