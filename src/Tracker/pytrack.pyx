@@ -16,30 +16,24 @@ cdef extern from "structures.h":
         int bee_classified
         int current_frame_classified
 
-
 cdef extern from "track.h":
     cdef cppclass Track:
         Track() except +
-        void track_frames_batch (vector[vector[point]] all_contour_locations, vector[vector[loc_index_classified]] all_classified_loc_indexes)
+        void track_frames_batch (vector[vector[point]], vector[vector[loc_index_classified]])
         void track_frame (vector[point] contour_locations, vector[int] contour_classifications)
         void training_track_frame (vector[point] contour_locations, vector[loc_index_classified] classified_loc_indexes, vector[int] flattened_28x28_tag_matrix)
         vector[bee_frame_data] get_tracked_bees_current_frame (int current_frame)
 
-cpdef test():
-    b = new Bee(21)
-    print(b.get_class_classified())
-    print(b.get_id())
-
-    cdef point p
-    p.x = 11
-    p.y = 12
-    p.frame_num = 13
-    b.append_point(p)
-    print(b.get_last_point())
-
 cdef class PyTrack:
     cdef Track track
     def __cinit__(self):
-        self.track = track()
-    def track_frames_batch(all_contour_locations, all_classified_loc_indexes):
+        self.track = Track()
+    def track_frames_batch(self, all_contour_locations, all_classified_loc_indexes):
         self.track.track_frames_batch(all_contour_locations, all_classified_loc_indexes)
+    def track_frame(self, contour_locations, contour_classifications):
+        self.track.track_frame(contour_locations, contour_classifications)
+    def training_track_frame(self, contour_locations, classified_loc_indexes, flattened_28x28_tag_matrix):
+        self.track.training_track_frame(contour_locations, classified_loc_indexes, flattened_28x28_tag_matrix)
+    def get_tracked_bees_current_frame(self, current_frame):
+        bee_frame_data = self.track.get_tracked_bees_current_frame (current_frame)
+        return bee_frame_data
