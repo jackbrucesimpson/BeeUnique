@@ -32,7 +32,7 @@ public:
 
     void delete_bee ();
 
-    //
+    void merge_delete_bee ();
 
     void transfer_bee_path_classifications (std::vector<point> new_points, std::vector<frame_classified> new_frame_classifieds);
 
@@ -44,7 +44,7 @@ public:
 
     void append_flattened_28x28_tag_matrices (std::vector<int> flattened_28x28_tag_matrix);
 
-    std::vector<std::vector<int>> get_flattened_28x28_tag_matrices ():
+    std::vector<std::vector<int>> get_flattened_28x28_tag_matrices ();
 
 private:
     int identity;
@@ -54,7 +54,7 @@ private:
     std::vector<frame_classified> classifications;
     std::vector<frame_classified> recent_classifications;
 
-    <std::vector<std::vector<int>> flattened_28x28_tag_matrices;
+    std::vector<std::vector<int>> flattened_28x28_tag_matrices;
 
     int class_classified = UNKNOWN_CLASS;
     bool is_deleted = false;

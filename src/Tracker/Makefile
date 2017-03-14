@@ -5,10 +5,10 @@ SRCS = \
        bee.cpp \
        track.cpp \
        main.cpp
-PROG = bin/u
+PROG = u
 
 $(PROG):$(SRCS)
-	$(CC) $(CFLAGS) -o $(PROG) $(SRCS) #$(LIBS)
+	$(CC) $(CFLAGS) -o $(PROG) $(SRCS)
 
 clean:
 	rm $(PROG)

@@ -25,10 +25,3 @@ struct bee_frame_data {
 };
 
 #endif /* __STRUCTURES_H__ */
-
-/*
-struct coordinate_point point;
-struct loc_index_classified_tag loc_index_classified;
-struct frame_num_classified frame_classified;
-struct current_frame_bee_data bee_data;
-*/
