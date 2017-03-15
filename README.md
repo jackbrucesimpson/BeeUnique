@@ -20,3 +20,8 @@ Tracking bees with unique tags
 - [ ] Work out ideal number of recent classifications to predict bee class
 - [ ] Implement awareness of when bee is near to other bees
 - [ ] When bee reappears close to where it disappeared keep note
+
+### Machine Learning
+- [ ] Label extracted tags from training images
+- [ ] Train Keras model and save it
+- [ ] Import into tracking class and use to generate tag predictions
