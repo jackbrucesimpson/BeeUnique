@@ -1,5 +1,17 @@
 # BeeUnique
+
 Tracking bees with unique tags
+
+## Setup
+
+### Dependencies
+- Requires a Mac/Linux OS
+- Python 2
+- OpenCV
+- Cython
+
+### Build
+- run the `build.sh` script in the `bin` directory
 
 ## To Do
 
