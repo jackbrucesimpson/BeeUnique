@@ -10,8 +10,12 @@ Tracking bees with unique tags
 - OpenCV
 - Cython
 
-### Build
-- run the `build.sh` script in the `bin` directory
+### Building & Running
+- Execution scripts are located in the `bin` directory
+- Run the `build.sh` script to compile the tracking library
+- Run `track.sh` after you edit it to change these variables:
+    - 'video_directory' - change to directory video files are stored in
+    - 'output_directory' - where you want to write your data out to
 
 ## To Do
 
