@@ -16,6 +16,16 @@ cdef extern from "structures.h":
         int bee_classified
         int current_frame_classified
 
+    struct frame_classified:
+        int frame_num
+        int classified
+
+    struct all_bee_data:
+        int id
+        int class_classified
+        vector[point] path
+        vector[frame_classified] classifications
+
 cdef extern from "track.h":
     cdef cppclass Track:
         Track() except +
@@ -23,6 +33,7 @@ cdef extern from "track.h":
         void track_frame (vector[point] contour_locations, vector[int] contour_classifications)
         void training_track_frame (vector[point] contour_locations, vector[loc_index_classified] classified_loc_indexes, vector[int] flattened_28x28_tag_matrix)
         vector[bee_frame_data] get_tracked_bees_current_frame (int current_frame)
+        vector[all_bee_data] get_all_bees_data ()
 
 cdef class PyTrack:
     cdef Track track
@@ -37,3 +48,5 @@ cdef class PyTrack:
     def get_tracked_bees_current_frame(self, current_frame):
         bee_frame_data = self.track.get_tracked_bees_current_frame (current_frame)
         return bee_frame_data
+    def get_all_bees(self):
+        return self.track.get_all_bees_data()

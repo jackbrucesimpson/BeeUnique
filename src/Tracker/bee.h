@@ -30,6 +30,8 @@ public:
 
     bool get_is_deleted ();
 
+    bool get_is_merged_into_other_bee ();
+
     void delete_bee ();
 
     void merge_delete_bee ();

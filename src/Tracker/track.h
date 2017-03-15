@@ -19,6 +19,8 @@ public:
 
     std::vector<bee_frame_data> get_tracked_bees_current_frame (int current_frame);
 
+    std::vector<all_bee_data> get_all_bees_data ();
+
 private:
     std::vector<Bee> all_bees;
     int bee_id_counter = 0;

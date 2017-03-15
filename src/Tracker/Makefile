@@ -5,7 +5,7 @@ SRCS = \
        bee.cpp \
        track.cpp \
        main.cpp
-PROG = u
+PROG = beeunique
 
 $(PROG):$(SRCS)
 	$(CC) $(CFLAGS) -o $(PROG) $(SRCS)

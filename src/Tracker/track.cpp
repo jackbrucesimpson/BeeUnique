@@ -179,6 +179,22 @@ void Track::training_track_frame (std::vector<point> contour_locations, std::vec
 
 }
 
+std::vector<all_bee_data> Track::get_all_bees_data () {
+    std::vector <all_bee_data> filtered_all_bees_data;
+    for (int i = 0; i < all_bees.size (); i++) {
+        if (!all_bees[i].get_is_merged_into_other_bee ()) {
+            all_bees[i].merge_recent_points_classifications ();
+            struct all_bee_data bee_data;
+            bee_data.id = all_bees[i].get_id ();
+            bee_data.class_classified = all_bees[i].get_class_classified ();
+            bee_data.path = all_bees[i].get_path ();
+            bee_data.classifications = all_bees[i].get_classifications ();
+            filtered_all_bees_data.push_back (bee_data);
+        }
+    }
+    return filtered_all_bees_data;
+}
+
 float Track::euclidian_distance (point p1, point p2) {
     const float delta_x = p1.x - p2.x;
     const float delta_y = p1.y - p2.y;

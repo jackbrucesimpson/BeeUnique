@@ -1,3 +1,5 @@
+#include <vector>
+
 #ifndef __STRUCTURES_H__
 #define __STRUCTURES_H__
 
@@ -22,6 +24,13 @@ struct bee_frame_data {
     float y;
     int bee_classified;
     int current_frame_classified;
+};
+
+struct all_bee_data {
+    int id;
+    int class_classified;
+    std::vector<point> path;
+    std::vector<frame_classified> classifications;
 };
 
 #endif /* __STRUCTURES_H__ */

@@ -10,13 +10,15 @@ __pycache__
 # Directories
 # data/
 nci/
+build/
 
 # Executables
 *.exe
 *.out
 *.app
-beeshiny
+beeunique
 *.dSYM
+*.so
 
 # Mac
 .DS_Store

@@ -48,6 +48,10 @@ bool Bee::get_is_deleted () {
     return is_deleted;
 }
 
+bool Bee::get_is_merged_into_other_bee () {
+    return is_merged_into_other_bee;
+}
+
 void Bee::delete_bee () {
     is_deleted = true;
 }
