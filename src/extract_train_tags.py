@@ -12,8 +12,7 @@ output_dir = os.path.join(data_dir, 'beeunique/output')
 input_video_file = os.path.join(raw_dir, '2017-02-14_22-22-15.mp4')
 
 def main():
-    num_frames_queued = 256
-    stream = Stream(video_path=input_video_file, queue_size=num_frames_queued).start()
+    stream = Stream(video_path=input_video_file, queue_size=256).start()
     fp = FrameProcessor(output_directory = output_dir, is_training=True)
 
     while stream.processing_frames():
@@ -24,6 +23,7 @@ def main():
 
     if len(fp.list_frames) > 0:
         fp.parallel_process_frames()
+    fp.output_background_image()
 
 if __name__ == "__main__":
     main()

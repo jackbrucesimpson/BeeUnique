@@ -18,13 +18,22 @@ class FrameProcessor:
         self.num_frames_predict_tags = 10000
         self.n_processes = 4
         self.chunksize = 1
-        self.
         self.list_frames = []
         self.frame_counter = 0
 
     def append_frame_increment_counter(self, frame):
         self.list_frames.append((self.frame_counter, frame))
         self.frame_counter += 1
+
+        # check to add frame to background average
+        if self.frame_counter % self.frame_bg_sample_freq == 0:
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            if self.sum_matrix_bg is None:
+                self.sum_matrix_bg = gray.astype(np.float64)
+            else:
+                self.sum_matrix_bg += gray.astype(np.float64)
+            self.num_frames_averaged += 1
+
         # check if enough frames to process
         if self.frame_counter % self.num_frames_batch_process == 0:
             return True
@@ -94,6 +103,17 @@ class FrameProcessor:
         else:
             pass
         return classifications
+
+    def output_background_image(self):
+        clahe = cv2.createCLAHE(clipLimit=10.0, tileGridSize=(9,9))
+        img = self.sum_matrix_bg /= n_frames
+        img = self.sum_matrix_bg.astype(np.uint8)
+        clahe_img = clahe.apply(img)
+
+        filename = 'bg' + '.png'
+        file_output = os.path.join(self.output_directory, filename)
+        
+        cv2.imwrite(file_output, clahe_img)
 
 def segment_frame(counter_frame):
     rect_dims = 15
