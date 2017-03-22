@@ -106,13 +106,13 @@ class FrameProcessor:
 
     def output_background_image(self):
         clahe = cv2.createCLAHE(clipLimit=10.0, tileGridSize=(9,9))
-        img = self.sum_matrix_bg /= n_frames
-        img = self.sum_matrix_bg.astype(np.uint8)
-        clahe_img = clahe.apply(img)
+        img = self.sum_matrix_bg / self.num_frames_averaged
+        img_uint8 = self.sum_matrix_bg.astype(np.uint8)
+        clahe_img = clahe.apply(img_uint8)
 
         filename = 'bg' + '.png'
         file_output = os.path.join(self.output_directory, filename)
-        
+
         cv2.imwrite(file_output, clahe_img)
 
 def segment_frame(counter_frame):
