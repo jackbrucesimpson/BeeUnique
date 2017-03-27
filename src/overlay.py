@@ -12,17 +12,14 @@ def main():
         sys.exit(1)
 
     stream = Stream(video_path=sys.argv[1], queue_size=256).start()
-    fp = FrameProcessor(video_path=sys.argv[1], output_directory = sys.argv[2], experiment_name = sys.arv[3] is_training = bool(int(sys.argv[4])))
+    fo = FrameProcessor(video_path=sys.argv[1], database_file_path = sys.arv[2])
 
     while stream.processing_frames():
         frame = stream.read()
-        enough_frames_to_process = fp.append_frame_increment_counter(frame)
-        if enough_frames_to_process:
-            fp.parallel_process_frames()
-
-    if len(fp.list_frames) > 0:
-        fp.parallel_process_frames()
-    fp.output_data()
+        overlaid_frame = fo.overlay_frame(frame)
+        cv2.imshow('frame', overlaid_frame)
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
 if __name__ == "__main__":
     main()

@@ -7,12 +7,12 @@ const int HALF_MIN_NUM_RECENT_CLASSIFICATIONS = MIN_NUM_RECENT_CLASSIFICATIONS /
 
 Bee::Bee (int id) : identity (id) {}
 
-void Bee::append_point (point p) {
+void Bee::append_point (Point p) {
     last_point = p;
     recent_path.push_back(p);
 }
 
-point Bee::get_last_point () {
+Point Bee::get_last_point () {
     return last_point;
 }
 
@@ -28,11 +28,11 @@ int Bee::get_id () const {
     return identity;
 }
 
-std::vector<point> Bee::get_path () {
+std::vector<Point> Bee::get_path () {
     return path;
 }
 
-std::vector<point> Bee::get_recent_path () {
+std::vector<Point> Bee::get_recent_path () {
     return recent_path;
 }
 
@@ -61,7 +61,7 @@ void Bee::merge_delete_bee () {
     is_deleted = true;
 }
 
-void Bee::transfer_bee_path_classifications (std::vector<point> new_points, std::vector<frame_classified> new_frame_classifieds) {
+void Bee::transfer_bee_path_classifications (std::vector<Point> new_points, std::vector<frame_classified> new_frame_classifieds) {
     merge_recent_points_classifications ();
     path.insert(path.end (), new_points.begin (), new_points.end ());
     classifications.insert(classifications.end (), new_frame_classifieds.begin (), new_frame_classifieds.end ());

@@ -2,6 +2,7 @@ import cv2
 import os
 import pandas as pd
 import numpy as np
+from datetime import datetime
 
 def segment_frame(counter_frame):
     rect_dims = 15
@@ -25,7 +26,7 @@ def segment_frame(counter_frame):
     for cnt in contours:
         if cv2.contourArea(cnt) > 100:
             centre, width_height, rotation = cv2.minAreaRect(cnt)
-            tag_locs.append({'x': centre[0], 'y': centre[1]})
+            tag_locs.append({'x': centre[0], 'y': centre[1], 'frame_num': frame_num})
             if width_height[0] > 27 and abs(width_height[0] - width_height[1]) < 4 and width_height[0] < 100:
                 extracted_tag_matrix = frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
                 tag_images.append(extracted_tag_matrix)
@@ -39,3 +40,15 @@ def get_video_filename(video_path):
     str_date_time = os.path.splitext(tail)[0]
     #dt = datetime.strptime(str_date_time, "%Y-%m-%d_%H-%M-%S")
     return str_date_time
+
+def create_experiment_directory(output_directory, experiment_name):
+    experiment_directory = os.path.join(output_directory, experiment_name)
+    if not os.path.exists(experiment_directory):
+        os.makedirs(experiment_directory)
+    return experiment_directory
+
+def create_tag_directory(experiment_directory, bee_id):
+    tag_directory = os.path.join(experiment_directory, bee_id)
+    if not os.path.exists(tag_directory):
+        os.makedirs(tag_directory)
+    return tag_directory
