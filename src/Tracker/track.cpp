@@ -175,7 +175,7 @@ std::vector<bee_frame_data> Track::get_tracked_bees_current_frame (int current_f
     return bee_frame_data_current_frame;
 }
 
-void Track::training_track_frame (std::vector<point> contour_locations, std::vector<loc_index_classified> classified_loc_indexes, std::vector<int> flattened_28x28_tag_matrix) {
+void Track::training_track_frame (std::vector<point> contour_locations, std::vector<loc_index_flat_tag> flat_tag_loc_indexes) {
 
 }
 

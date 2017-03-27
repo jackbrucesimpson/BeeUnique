@@ -6,16 +6,23 @@ import sys
 from Processor import Stream
 from Processor import FrameProcessor
 
-if len(sys.argv) != 3:
-    print("Need input video and output directory")
-    sys.exit(0)
-
-input_video_file = sys.argv[1]
-output_dir = sys.argv[2]
-
 def main():
+    if len(sys.argv) != 4:
+        print("Need input video and output directory")
+        sys.exit(1)
+
+    input_video_file = sys.argv[1]
+    output_dir = sys.argv[2]
+    if sys.argv[3] == 'train':
+        is_training = True
+    elif sys.argv[3] == 'track':
+        is_training = True
+    else:
+        print("Please indicate if you want to 'train' or 'track'")
+        sys.exit(1)
+
     stream = Stream(video_path=input_video_file, queue_size=256).start()
-    fp = FrameProcessor(output_directory = output_dir, is_training=True)
+    fp = FrameProcessor(video_path=input_video_file, output_directory = output_dir, is_training=is_training)
 
     while stream.processing_frames():
         frame = stream.read()

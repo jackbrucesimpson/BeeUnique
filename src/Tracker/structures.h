@@ -14,6 +14,11 @@ struct loc_index_classified {
     int classified;
 };
 
+struct loc_index_flat_tag {
+    int loc_index;
+    std::vector<int> flattened_28x28_tag_matrix;
+};
+
 struct frame_classified {
     int frame_num;
     int classified;
