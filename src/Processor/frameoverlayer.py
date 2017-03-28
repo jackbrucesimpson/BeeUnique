@@ -4,10 +4,23 @@ class FrameOverlayer:
     def __init__(self, video_path, database_file_path):
         video_filename = get_video_filename(video_path)
         self.db = DB(database_file_path)
-        self.video_id = db.get_video_id(video_filename)
+        video_id = db.get_video_id(video_filename)
+        self.bees_df, paths_df, frame_classifications_df = get_bees_paths_frame_classifications_in_video(video_id)
+        self.grouped_paths_df = paths_df.groupby(paths_df['FRAME_NUM'])
+        self.grouped_frame_classifications_df = frame_classifications_df.groupby(frame_classifications_df['FRAME_NUM'])
         self.frame_counter = 0
 
     def overlay_frame(self, frame):
+        current_frame_path_df = self.grouped_paths_df.get_group(self.frame_counter)
+        current_frame_classifications_df = self.grouped_frame_classifications_df.get_group(self.frame_counter)
+        
+
+
+        self.bees_df['']
+        current_frame_coords_df = self.paths_df[[self.paths_df'FRAME_NUM'] == self.frame_counter]
+        current_frame_classification_df = self.frame_classifications_df[[self.frame_classifications_df'FRAME_NUM'] == self.frame_counter]
+
+
 
         def overlay_frame(self, frame, tracked_bees):
         for bee in tracked_bees:

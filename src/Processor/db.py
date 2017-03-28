@@ -1,6 +1,7 @@
 import os
 import sqlite3
 from datetime import datetime
+import pandas as pd
 
 class DB:
     def __init__(self, database_file_path):
@@ -78,12 +79,18 @@ class DB:
         self.conn.commit()
 
     def get_video_id(self, video_filename):
-        c = conn.cursor()
+        c = self.conn.cursor()
         c.execute("SELECT VIDEO_ID FROM VIDEOS WHERE VIDEO_NAME='{}'".format(video_filename))
-        row = c.fetchone()
-        video_id = row['VIDEO_ID']
+        query_result = c.fetchone()
+        video_id =  query_result ['VIDEO_ID']
         c.close()
         return video_id
+
+    def get_bees_paths_frame_classifications_in_video(self, video_id):
+        bees_df = pd.read_sql_query("SELECT BEE_ID, CLASS_CLASSIFIED FROM BEES WHERE VIDEO_ID={}".format(video_id), self.conn)
+        paths_df = pd.read_sql_query("SELECT BEE_ID, X, Y, FRAME_NUM FROM PATHS WHERE BEE_ID IN {}".format(str(tuple(bees_df['BEE_ID']))), self.conn)
+        frame_classifications_df = pd.read_sql_query("SELECT BEE_ID, CLASSIFICATIONS, FRAME_NUM FROM FRAME_CLASSIFICATIONS WHERE BEE_ID IN {}".format(str(tuple(bees_df['BEE_ID']))), self.conn)
+        return (bees_df, paths_df, frame_classifications_df)
 
     def close_conn(self):
         conn.close()
