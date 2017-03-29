@@ -17,4 +17,4 @@ Tracking bees with unique tags
     - 'VIDEO_DIRECTORY' - set to directory video files are stored in
     - 'OUTPUT_DIRECTORY' - set to where you want to write your data out to
 
-<iframe src="https://www.w3schools.com" width="640" height="480"></iframe>
+<iframe width="560" height="315" src="http://www.youtube.com/embed/EKoxLxzWNOk" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
