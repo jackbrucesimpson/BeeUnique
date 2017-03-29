@@ -43,7 +43,37 @@ bool Track::identify_past_location (std::vector<Point> contour_locations, int co
         return new_bee_found;
     }
 
+    for (int i = 0; i < all_bees.size (); i++) {
+        if (all_bees[i].get_is_deleted ()) {
+            continue;
+        }
+        Point last_frame_loc_of_bee = all_bees[i].get_last_point();
+        int frames_since_last_seen = video_frame_num - last_frame_loc_of_bee.frame_num;
+
+        if (frames_since_last_seen > FRAMES_BEFORE_EXTINCTION){
+            if (all_bees[i].get_class_classified() == UNKNOWN_CLASS){
+                all_bees[i].delete_bee ();
+            }
+            continue;
+        }
+
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
     Point current_tag_contour = contour_locations[contour_index];
+    int tag_best_match_position;
+    int best_match_frames_since_last_seen = 1000;
+    float closest_match_distance = 100000;
     for (int i = 0; i < all_bees.size (); i++) {
         if (all_bees[i].get_is_deleted ()) {
             continue;
@@ -72,7 +102,7 @@ bool Track::identify_past_location (std::vector<Point> contour_locations, int co
                 }
             }
 
-            if (!better_match_available) {
+            if (!better_match_available && closeness_bee_current_contour < closest_match_distance) {
                 all_bees[i].append_point (current_tag_contour);
                 if (contour_classification != UNKNOWN_CLASS) {
                     struct FrameClassified fc; fc.classified = contour_classification; fc.frame_num = video_frame_num;
@@ -179,7 +209,6 @@ bool Track::training_identify_past_location (std::vector<Point> contour_location
     }
 
     Point current_tag_contour = contour_locations[contour_index];
-
     for (int i = 0; i < all_bees.size (); i++) {
         if (all_bees[i].get_is_deleted ()) {
             continue;
@@ -188,6 +217,7 @@ bool Track::training_identify_past_location (std::vector<Point> contour_location
         Point last_frame_loc_of_bee = all_bees[i].get_last_point();
         int frames_since_last_seen = video_frame_num - last_frame_loc_of_bee.frame_num;
         bool better_match_available = false;
+        bool bee_too_close_to_other = false;
 
         if (frames_since_last_seen > FRAMES_BEFORE_EXTINCTION){
             if (all_bees[i].get_class_classified() == UNKNOWN_CLASS){
@@ -198,12 +228,16 @@ bool Track::training_identify_past_location (std::vector<Point> contour_location
 
         float closeness_bee_current_contour = euclidian_distance (current_tag_contour, last_frame_loc_of_bee);
         if (closeness_bee_current_contour < SEARCH_SURROUNDING_AREA && closeness_bee_current_contour < frames_since_last_seen * SEARCH_EXPANSION_BY_FRAME) {
-            for (int j = 0; j < all_bees.size (); j++) {
+            for (int j = 0; j < contour_locations.size (); j++) {
                 if (contour_index != j) {
                     float closeness_to_other_tag = euclidian_distance (contour_locations[j], last_frame_loc_of_bee);
                     if (closeness_to_other_tag < closeness_bee_current_contour) {
                         better_match_available = true;
                         break;
+                    }
+                    else if (closeness_to_other_tag < MIN_CLOSENESS_BEFORE_DELETE)
+                    {
+                        bee_too_close_to_other = true;
                     }
                 }
             }

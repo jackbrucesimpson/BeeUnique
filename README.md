@@ -7,7 +7,7 @@ Tracking bees with unique tags
 ### Dependencies
 - Requires a Mac/Linux OS
 - Python 2
-- OpenCV
+- OpenCV 2
 - Cython
 
 ### Building & Running
@@ -16,3 +16,5 @@ Tracking bees with unique tags
 - Run `track.sh` after you edit it to change these variables:
     - 'VIDEO_DIRECTORY' - set to directory video files are stored in
     - 'OUTPUT_DIRECTORY' - set to where you want to write your data out to
+
+<iframe src="https://www.w3schools.com" width="640" height="480"></iframe>
