@@ -103,6 +103,29 @@ class FrameProcessor:
         tracker.track_frames_batch(all_tag_locs, all_tag_classifications, all_frame_nums_batch)
 
     def output_data (self):
+        bee_id =
+        video_id =
+        bees_dict = {'BEE_ID': [], 'CLASS_CLASSIFIED': [], 'VIDEO_ID': []}
+        paths_df = pd.DataFrame()
+
+        all_bees_data = tracker.get_all_bees_data()
+        for bee in all_bees_data:
+            bee_path_df = pd.DataFrame.from_records(bee['path'])
+            bee_path_df['BEE_ID'] = bee_id
+            pd.concat([paths_df, bee_path_df], ignore_index=True)
+            bees_dict['BEE_ID'].append(bee_id)
+            bee_id += 1
+            bees_dict['VIDEO_ID'].append(video_id)
+            bees_dict['BEE_ID'].append(bee['class_classified'])
+
+        bees_df = pd.DataFrame(bees_dict)
+
+        bees_df.to_sql('BEES', engine, if_exists='append')
+        paths_df.to_sql('PATHS', engine, if_exists='append')
+
+        select all bee_ids in video_filename and then select all paths from that
+
+
         self.bg_image.output_background_image(self.experiment_directory, self.video_filename)
         db_filename = self.experiment_name + '.db'
         database_file_path = os.path.join(self.experiment_directory, db_filename)

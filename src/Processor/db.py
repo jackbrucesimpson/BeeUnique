@@ -58,14 +58,8 @@ class DB:
 
     def insert_path(self, bee_id, x, y, frame_num):
         c = self.conn.cursor()
-        c.execute("INSERT INTO PATHS (BEE_ID, CLASS_CLASSIFIED) VALUES ({}, {}, {}, {})".format(bee_id, x, y, frame_num));
-        bee_id = (c.lastrowid)
-        c.close()
-        self.conn.commit()
-
-    def insert_classifications(self, bee_id, classified, frame_num):
-        c = self.conn.cursor()
-        c.execute("INSERT INTO FRAME_CLASSIFICATIONS (BEE_ID, CLASSIFIED, FRAME_NUM) VALUES ({}, {}, {})".format(bee_id, classified, frame_num));
+        c.executemany("INSERT INTO myTable(data) values(?)", clist)
+        c.executemany("INSERT INTO PATHS (BEE_ID, X, Y, FRAME_NUM, CLASSIFIED) VALUES ({}, {}, {}, {})".format(bee_id, x, y, frame_num));
         bee_id = (c.lastrowid)
         c.close()
         self.conn.commit()
@@ -78,7 +72,7 @@ class DB:
         c.close()
         return video_id
 
-    def get_bees_paths_frame_classifications_in_video(self, video_id):
+    def get_bees_paths_in_video(self, video_id):
         bees_df = pd.read_sql_query("SELECT BEE_ID, CLASS_CLASSIFIED FROM BEES WHERE VIDEO_ID={}".format(video_id), self.conn)
         paths_df = pd.read_sql_query("SELECT BEE_ID, X, Y, FRAME_NUM FROM PATHS WHERE BEE_ID IN {}".format(str(tuple(bees_df['BEE_ID']))), self.conn)
         frame_classifications_df = pd.read_sql_query("SELECT BEE_ID, CLASSIFICATIONS, FRAME_NUM FROM FRAME_CLASSIFICATIONS WHERE BEE_ID IN {}".format(str(tuple(bees_df['BEE_ID']))), self.conn)
