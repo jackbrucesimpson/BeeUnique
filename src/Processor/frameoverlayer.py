@@ -13,10 +13,10 @@ class FrameOverlayer:
     def overlay_frame(self, frame):
         current_frame_path_df = self.grouped_paths_df.get_group(self.frame_counter)
         current_frame_classifications_df = self.grouped_frame_classifications_df.get_group(self.frame_counter)
-        
 
 
-        self.bees_df['']
+
+        self.bees_df['BEE_ID']
         current_frame_coords_df = self.paths_df[[self.paths_df'FRAME_NUM'] == self.frame_counter]
         current_frame_classification_df = self.frame_classifications_df[[self.frame_classifications_df'FRAME_NUM'] == self.frame_counter]
 

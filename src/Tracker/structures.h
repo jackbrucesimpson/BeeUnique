@@ -6,6 +6,7 @@
 struct Point {
     float x;
     float y;
+    int classified;
     int frame_num;
 };
 
@@ -14,18 +15,9 @@ struct FrameClassified {
     int classified;
 };
 
-struct FrameBeeData {
-    float x;
-    float y;
-    int class_classified;
-    int current_frame_classified;
-};
-
 struct OutputBeeData {
-    int id;
     int class_classified;
     std::vector<Point> path;
-    std::vector<FrameClassified> classifications;
     std::vector<std::vector<int>> flattened_28x28_tag_matrices;
 };
 

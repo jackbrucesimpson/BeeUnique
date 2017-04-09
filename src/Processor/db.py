@@ -29,15 +29,7 @@ class DB:
                             X                       FLOAT NOT NULL,
                             Y                       FLOAT NOT NULL,
                             FRAME_NUM               INTEGER UNSIGNED NOT NULL,
-
-                            PRIMARY KEY             (BEE_ID, FRAME_NUM),
-                            FOREIGN KEY             (BEE_ID)                                    REFERENCES BEES(BEE_ID));
-        ''')
-
-        c.execute('''    CREATE TABLE IF NOT EXISTS FRAME_CLASSIFICATIONS
-                            (BEE_ID                 INTEGER UNSIGNED NOT NULL,
-                            FRAME_NUM               INTEGER UNSIGNED NOT NULL,
-                            CLASSIFIED              INTEGER UNSIGNED NOT NULL,
+                            CLASSIFIED              INTEGER UNSIGNED,
 
                             PRIMARY KEY             (BEE_ID, FRAME_NUM),
                             FOREIGN KEY             (BEE_ID)                                    REFERENCES BEES(BEE_ID));

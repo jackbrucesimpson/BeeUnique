@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -u
+set -e
+
 cd ../src/Tracker
 python setup.py build_ext --inplace
 rm pytrack.cpp

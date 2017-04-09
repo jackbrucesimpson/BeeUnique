@@ -1,4 +1,4 @@
-#include "Bee.h"
+#include "bee.h"
 #include "structures.h"
 
 #include <vector>
@@ -21,10 +21,7 @@ public:
 
 private:
     std::vector<Bee> all_bees;
-    int bee_id_counter = 0;
     int video_frame_num = 0;
-
-    std::vector<int> extract_contour_classifications (std::vector<loc_index_classified> classified_loc_indexes, int num_contours);
 
     bool identify_past_location (std::vector<Point> contour_locations, int contour_classification, int contour_index);
 

@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+set -u
+set -e
+
 VIDEO_DIRECTORY="/Users/jacksimpson/Data/beehome/raw"
 OUTPUT_DIRECTORY=""
 NUM_VIDEOS_PROCESS_PARALLEL=3

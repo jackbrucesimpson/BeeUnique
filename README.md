@@ -16,5 +16,3 @@ Tracking bees with unique tags
 - Run `track.sh` after you edit it to change these variables:
     - 'VIDEO_DIRECTORY' - set to directory video files are stored in
     - 'OUTPUT_DIRECTORY' - set to where you want to write your data out to
-
-<iframe width="560" height="315" src="http://www.youtube.com/embed/EKoxLxzWNOk" frameborder="0" allowfullscreen="allowfullscreen"></iframe>

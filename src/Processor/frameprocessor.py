@@ -113,9 +113,7 @@ class FrameProcessor:
         for bee in all_bees_data:
             bee_id = db.insert_bee(bee['class_classified'])
             for point in bee['path']:
-                db.insert_path(bee_id, point['x'], point['y'], point['frame_num'])
-            for frame_classified in bee['classifications']:
-                db.insert_classifications(bee_id, frame_classified['classified'], frame_classified['frame_num'])
+                db.insert_path(bee_id, point['x'], point['y'], point['frame_num'], point['classified'])
 
             if self.is_training:
                 tag_directory = create_tag_directory(self.experiment_directory, bee['id'])

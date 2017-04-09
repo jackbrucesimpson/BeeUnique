@@ -8,7 +8,7 @@
 
 class Bee {
 public:
-    Bee(int id);
+    Bee ();
 
     void append_point (Point p);
 
@@ -24,9 +24,9 @@ public:
 
     std::vector<Point> get_recent_path ();
 
-    std::vector<frame_classified> get_classifications ();
+    std::vector<FrameClassified> get_classifications ();
 
-    std::vector<frame_classified> get_recent_classifications ();
+    std::vector<FrameClassified> get_recent_classifications ();
 
     bool get_is_deleted ();
 
@@ -36,9 +36,9 @@ public:
 
     void merge_delete_bee ();
 
-    void transfer_bee_path_classifications (std::vector<Point> new_points, std::vector<frame_classified> new_frame_classifieds);
+    void transfer_bee_path_classifications (std::vector<Point> new_points, std::vector<FrameClassified> new_frame_classifieds);
 
-    int append_frame_classified_classify_bee (frame_classified fc);
+    int append_frame_classified_classify_bee (FrameClassified fc);
 
     void delete_recent_points_classifications ();
 
@@ -53,8 +53,8 @@ private:
     Point last_point;
     std::vector<Point> path;
     std::vector<Point> recent_path;
-    std::vector<frame_classified> classifications;
-    std::vector<frame_classified> recent_classifications;
+    std::vector<FrameClassified> classifications;
+    std::vector<FrameClassified> recent_classifications;
 
     std::vector<std::vector<int>> flattened_28x28_tag_matrices;
 
