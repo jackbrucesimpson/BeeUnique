@@ -1,5 +1,6 @@
 import cv2
 import os
+import numpy as np
 
 class BGImage:
     def __init__(self):
@@ -10,9 +11,9 @@ class BGImage:
     def update_bg_average_image(self, frame):
         gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         if self.sum_matrix_bg is None:
-            self.sum_matrix_bg = gray.astype(np.float64)
+            self.sum_matrix_bg = gray_frame.astype(np.float64)
         else:
-            self.sum_matrix_bg += gray.astype(np.float64)
+            self.sum_matrix_bg += gray_frame.astype(np.float64)
         self.num_frames_averaged += 1
 
     def output_bg_image(self, experiment_directory, video_filename):

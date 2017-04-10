@@ -1,6 +1,7 @@
 #include "track.h"
 
 #include <math.h>
+#include <iostream>
 
 #define BEST_MATCH_FRAMES_SINCE_LAST_SEEN 1000
 #define CLOSEST_MATCH_DISTANCE 100000
@@ -63,7 +64,7 @@ bool Track::identify_past_location (std::vector<Point> contour_locations, int co
         }
 
         bool better_match_other_contour = false;
-        for (int j = 0; i < contour_locations.size (); j++) {
+        for (int j = 0; j < contour_locations.size (); j++) {
             if (contour_index == j) {
                 continue;
             }
@@ -158,6 +159,9 @@ float Track::euclidian_distance (Point p1, Point p2) {
 
 void Track::training_track_frame (std::vector<Point> contour_locations, std::vector<std::vector<int>> flattened_28x28_tag_matrices, int frame_num) {
     video_frame_num = frame_num;
+    //std::cout << video_frame_num << std::endl;
+    //std::cout << contour_locations[0].x << std::endl;
+
     for (int i = 0; i < contour_locations.size (); i++) {
         bool new_bee_found = training_identify_past_location(contour_locations, flattened_28x28_tag_matrices[i], i);
         if (new_bee_found) {
@@ -169,6 +173,7 @@ void Track::training_track_frame (std::vector<Point> contour_locations, std::vec
             all_bees.push_back(new_bee);
         }
     }
+
 }
 
 bool Track::training_identify_past_location (std::vector<Point> contour_locations, std::vector<int> flattened_28x28_tag_matrix, int contour_index) {
@@ -196,7 +201,7 @@ bool Track::training_identify_past_location (std::vector<Point> contour_location
         }
 
         bool better_match_other_contour = false;
-        for (int j = 0; i < contour_locations.size (); j++) {
+        for (int j = 0; j < contour_locations.size (); j++) {
             if (contour_index == j) {
                 continue;
             }

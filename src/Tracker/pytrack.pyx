@@ -13,23 +13,22 @@ cdef extern from "structures.h":
     struct OutputBeeData:
         int class_classified
         vector[Point] path
-        vector[FrameClassified] classifications
         vector[vector[int]] flattened_28x28_tag_matrices
 
 cdef extern from "track.h":
     cdef cppclass Track:
         Track() except +
-        void track_frames_batch (vector[vector[point]], vector[vector[loc_index_classified]])
-        void training_track_frame (vector[point], vector[loc_index_flat_tag])
+        void track_frames_batch (vector[vector[Point]], vector[vector[int]], vector[int])
+        void training_track_frame (vector[Point], vector[vector[int]], int)
         vector[OutputBeeData] get_all_bees_data ()
 
 cdef class PyTrack:
     cdef Track track
     def __cinit__(self):
         self.track = Track()
-    def track_frames_batch(self, all_contour_locations, all_classified_loc_indexes):
-        self.track.track_frames_batch(all_contour_locations, all_classified_loc_indexes)
-    def training_track_frame(self, contour_locations, flat_tag_loc_indexes):
-        self.track.training_track_frame(contour_locations, flat_tag_loc_indexes)
+    def track_frames_batch(self, all_contour_locations, all_contour_classifications, all_frame_nums_batch):
+        self.track.track_frames_batch(all_contour_locations, all_contour_classifications, all_frame_nums_batch)
+    def training_track_frame(self, contour_locations, flattened_28x28_tag_matrices, frame_num):
+        self.track.training_track_frame(contour_locations, flattened_28x28_tag_matrices, frame_num)
     def get_all_bees(self):
         return self.track.get_all_bees_data()

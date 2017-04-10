@@ -28,15 +28,15 @@ def segment_frame(counter_frame):
             centre, width_height, rotation = cv2.minAreaRect(cnt)
             tag_locs.append({'x': centre[0], 'y': centre[1], 'frame_num': frame_num})
             if width_height[0] > 27 and abs(width_height[0] - width_height[1]) < 4 and width_height[0] < 100:
-                extracted_tag_matrix = frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
+                extracted_tag_matrix = gray_frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
                 tag_images.append(extracted_tag_matrix)
             else:
-                tag_images.append(np.nan)
+                tag_images.append(None)
 
     return pd.DataFrame({'frame_num': frame_num, 'tag_locs': tag_locs, 'tag_images': tag_images})
 
 def get_video_filename(video_path):
-    head, tail = os.path.split(filename_path)
+    head, tail = os.path.split(video_path)
     str_date_time = os.path.splitext(tail)[0]
     #dt = datetime.strptime(str_date_time, "%Y-%m-%d_%H-%M-%S")
     return str_date_time

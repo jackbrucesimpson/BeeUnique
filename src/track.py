@@ -12,7 +12,7 @@ def main():
         sys.exit(1)
 
     stream = Stream(video_path=sys.argv[1], queue_size=256).start()
-    fp = FrameProcessor(video_path=sys.argv[1], output_directory = sys.argv[2], experiment_name = sys.arv[3] is_training = bool(int(sys.argv[4])))
+    fp = FrameProcessor(video_path=sys.argv[1], output_directory = sys.argv[2], experiment_name = sys.argv[3], is_training = bool(int(sys.argv[4])))
 
     while stream.processing_frames():
         frame = stream.read()
