@@ -4,15 +4,15 @@ import os
 import sys
 
 from Processor import Stream
-from Processor import FrameProcessor
+from Processor import FrameOverlayer
 
 def main():
-    if len(sys.argv) != 5:
-        print("Need input video, output directory, experiment name, and training arguments")
+    if len(sys.argv) != 3:
+        print("Need input video and path to database file")
         sys.exit(1)
 
     stream = Stream(video_path=sys.argv[1], queue_size=256).start()
-    fo = FrameProcessor(video_path=sys.argv[1], database_file_path = sys.arv[2])
+    fo = FrameOverlayer(video_path=sys.argv[1], database_file_path = sys.arv[2])
 
     while stream.processing_frames():
         frame = stream.read()

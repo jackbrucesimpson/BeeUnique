@@ -34,24 +34,11 @@ class FrameProcessor:
         self.chunksize = 1
 
     def append_frame_increment_counter(self, frame):
-        # if training, only process 4 blocks of 3 minutes from video
         print(self.frame_counter)
+
         if self.is_training:
-            if self.frame_counter >= self.train_3_min_segment[self.segment_index][0] and self.frame_counter <= self.train_3_min_segment[self.segment_index][1]:
-                pass
-            else:
-                if self.frame_counter > self.train_3_min_segment[self.segment_index][0]:
-                    if len(self.train_3_min_segment) - 1 > self.segment_index:
-                        self.segment_index += 1
-                        self.frame_counter += 1
-                        self.parallel_process_frames()
-                        return False
-                    else:
-                        print('Finishing training processing of video')
-                        sys.exit(0)
-                else:
-                    self.frame_counter += 1
-                    return False
+            if not is_in_train_segment():
+                return False
 
         self.list_frames_batch.append((self.frame_counter, frame))
         self.frame_counter += 1
@@ -65,6 +52,25 @@ class FrameProcessor:
             return True
         else:
             return False
+
+    def is_in_train_segment(self):
+        # if training, only process 4 blocks of 3 minutes from video
+        if self.frame_counter >= self.train_3_min_segment[self.segment_index][0] and self.frame_counter <= self.train_3_min_segment[self.segment_index][1]:
+            return True
+        else:
+            if self.frame_counter > self.train_3_min_segment[self.segment_index][0]:
+                if len(self.train_3_min_segment) - 1 > self.segment_index:
+                    self.segment_index += 1
+                    self.frame_counter += 1
+                    self.parallel_process_frames()
+                    return False
+                else:
+                    print('Finishing training processing of video')
+                    self.output_data()
+                    sys.exit(0)
+            else:
+                self.frame_counter += 1
+                return False
 
     def parallel_process_frames(self):
         processes = multiprocessing.Pool(processes=self.n_processes)
@@ -103,3 +109,39 @@ class FrameProcessor:
             batch_frame_output['frame_num'].append(i)
 
         self.pytrack.track_frames_batch(batch_frame_output['tag_locs'], batch_frame_output['tag_classes'], batch_frame_output['frame_num'])
+
+    def output_data (self):
+        self.bg_image.output_background_image(self.experiment_directory, self.video_filename)
+
+        db_filename = self.experiment_name + '.db'
+        database_file_path = os.path.join(self.experiment_directory, db_filename)
+        db = DB(database_file_path)
+
+        video_id = db.insert_video_info(self.video_filename)
+        bee_id = db.get_next_bee_id(video_id)
+        bees_dict = {'BEE_ID': [], 'CLASS_CLASSIFIED': [], 'VIDEO_ID': []}
+        paths_df = pd.DataFrame()
+
+        all_bees_data = self.pytrack.get_all_bees_data()
+        for bee in all_bees_data:
+            bee_path_df = pd.DataFrame.from_records(bee['path'])
+            bee_path_df['BEE_ID'] = bee_id
+            pd.concat([paths_df, bee_path_df], ignore_index=True)
+            bees_dict['BEE_ID'].append(bee_id)
+            bees_dict['VIDEO_ID'].append(video_id)
+            bees_dict['BEE_ID'].append(bee['class_classified'])
+
+            if self.is_training:
+                tag_directory = create_tag_directory(self.experiment_directory, uuid.uuid4().hex)
+                for flattened_28x28_tag_matrix in bee['flattened_28x28_tag_matrices']:
+                    tag_matrix = np.array(flattened_28x28_tag_matrix, dtype=uint8).reshape(28, 28)
+                    tag_filename = uuid.uuid4().hex + '.png'
+                    output_tag_image_path = os.path.join(tag_directory, tag_filename)
+                    cv2.imwrite(output_tag_image_path, tag_matrix)
+
+            bee_id += 1
+
+        bees_df = pd.DataFrame(bees_dict)
+        db.insert_bees_and_paths(bees_df, paths_df)
+
+        db.close_conn()
