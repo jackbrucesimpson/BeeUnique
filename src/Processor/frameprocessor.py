@@ -23,7 +23,7 @@ class FrameProcessor:
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
         # frame nums for 5 minute training segments 0-5, 15-20, 30-35, 45-50 minutes @ 20 fps
-        self.train_3_min_segment = ((0, 100), (200, 300),) #(400, 500))#((0, 3000), (18000, 21000), (36000, 39000), (54000, 57000))
+        self.train_3_min_segment = ((0, 3000), (18000, 21000), (36000, 39000), (54000, 57000))
         self.segment_index = 0
 
         self.list_frames_batch = []
@@ -39,7 +39,7 @@ class FrameProcessor:
 
         if self.is_training:
             pass
-            #if not is_in_train_segment():
+            #if not self.is_in_train_segment():
                 #return False
 
         self.list_frames_batch.append((self.frame_counter, frame))

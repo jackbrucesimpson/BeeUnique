@@ -1,22 +1,13 @@
 #!/usr/bin/env bash
-
 set -u
 set -e
 
-VIDEO_DIRECTORY="/Users/jacksimpson/Data/beeunique/raw"
-OUTPUT_DIRECTORY=""
-NUM_VIDEOS_PROCESS_PARALLEL=3
-
+VIDEO_DIRECTORY="/media/jack/ID2"
+OUTPUT_DIRECTORY="/home/jack/Data/beeunique/output"
+TRAINING=0 # 0:False, 1:True
+EXPERIMENT_NAME='Caffeine_Unique_Tags'
 file_array=("$VIDEO_DIRECTORY/*.mp4")
-file_num=0
 
 for filename_path in $file_array; do
-    file_num=$((file_num + 1))
-    echo $filename_path
-    #python ../src/track.py $filename_path $OUTPUT_DIRECTORY &
-
-    if [ $((file_num % NUM_VIDEOS_PROCESS_PARALLEL)) = 0 ]; then
-        wait
-    fi
-
+    python ../src/track.py $filename_path $OUTPUT_DIRECTORY $EXPERIMENT_NAME $TRAINING
 done
