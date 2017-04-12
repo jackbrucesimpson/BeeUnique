@@ -54,7 +54,7 @@ bool Bee::get_is_merged_into_other_bee () {
 }
 
 void Bee::delete_bee () {
-    if (get_class_classified () != UNKNOWN_CLASS) {
+    if (get_class_classified () == UNKNOWN_CLASS) {
         is_deleted = true;
     }
 }

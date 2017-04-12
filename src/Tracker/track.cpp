@@ -5,10 +5,10 @@
 
 #define BEST_MATCH_FRAMES_SINCE_LAST_SEEN 1000
 #define CLOSEST_MATCH_DISTANCE 100000
-#define FRAMES_BEFORE_EXTINCTION 80
+#define FRAMES_BEFORE_EXTINCTION 60
 #define SEARCH_SURROUNDING_AREA 200
 #define SEARCH_EXPANSION_BY_FRAME 20
-#define MIN_CLOSENESS_BEFORE_DELETE 60
+#define MIN_CLOSENESS_BEFORE_DELETE 30
 #define UNKNOWN_CLASS 0
 
 
@@ -93,7 +93,6 @@ bool Track::identify_past_location (std::vector<Point> contour_locations, int co
             }
         }
     }
-
     return new_bee_found;
 
 } // bool Track::identify_past_location

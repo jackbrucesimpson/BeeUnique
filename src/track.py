@@ -15,6 +15,8 @@ def main():
         print("Need input video, output directory, experiment name, and training arguments")
         sys.exit(1)
 
+    print('Processing video: ', sys.argv[1])
+
     stream = Stream(video_path=sys.argv[1], queue_size=256).start()
     fp = FrameProcessor(video_path=sys.argv[1], output_directory = sys.argv[2], experiment_name = sys.argv[3], is_training = bool(int(sys.argv[4])))
 
@@ -30,8 +32,6 @@ def main():
 
     end_time = time.time()
     print('Execution time in seconds:', end_time-start_time)
-    print(fp.pp_time)
-    print(fp.track_time)
 
 if __name__ == "__main__":
     main()

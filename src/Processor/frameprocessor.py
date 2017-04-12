@@ -8,7 +8,6 @@ import numpy as np
 import sys
 from datetime import datetime
 import uuid
-import time
 
 from bgimage import BGImage
 from utilities import segment_frame, get_video_filename, create_dir_check_exists
@@ -33,9 +32,6 @@ class FrameProcessor:
         self.num_frames_batch_process = 100
         self.n_processes = 8
         self.chunksize = 2
-
-        self.pp_time = 0
-        self.track_time = 0
 
     def append_frame_increment_counter(self, frame):
         if self.frame_counter % 100 == 0:
@@ -78,24 +74,17 @@ class FrameProcessor:
                 return False
 
     def parallel_process_frames(self):
-        t1 = time.time()
         processes = multiprocessing.Pool(processes=self.n_processes)
         frames_output_dfs = processes.map(func=segment_frame, iterable=self.list_frames_batch, chunksize=self.chunksize)
         processes.close()
         processes.join()
 
-        t2 = time.time()
-        self.pp_time += t2-t1
-
-        t1 = time.time()
         df = pd.concat(frames_output_dfs, ignore_index=True)
         df['tag_classes'] = 0
         if self.is_training:
             self.training_track(df)
         else:
             self.track(df)
-        t2 = time.time()
-        self.track_time += t2-t1
 
         self.list_frames_batch = []
 
@@ -143,7 +132,7 @@ class FrameProcessor:
             bees_dict['VIDEO_ID'].append(video_id)
             bees_dict['CLASS_CLASSIFIED'].append(bee['class_classified'])
 
-            if self.is_training:
+            if self.is_training and len(bee['flattened_28x28_tag_matrices']) > 0:
                 tag_directory = create_dir_check_exists(self.experiment_directory, self.video_filename)
                 bees_tag_directory = create_dir_check_exists(tag_directory, uuid.uuid4().hex)
                 for flattened_28x28_tag_matrix in bee['flattened_28x28_tag_matrices']:

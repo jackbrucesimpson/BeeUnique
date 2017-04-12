@@ -16,6 +16,8 @@ class FrameOverlayer:
 
     def overlay_frame(self, frame):
         frame_df = self.bees_paths_df[self.bees_paths_df['FRAME_NUM']==self.frame_counter]
+        frame_num_text = 'Frame: ' + str(self.frame_counter)
+        cv2.putText(frame, frame_num_text, (40, 40), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)
         for row in frame_df.itertuples():
             cv2.rectangle(frame, (int(row.X-15), int(row.Y-15)), (int(row.X+15), int(row.Y+15)), (0,255,0), 2)
             frame_class_bee_class_text = "{} {} {}".format(row.CLASSIFIED, row.CLASS_CLASSIFIED, row.BEE_ID)
