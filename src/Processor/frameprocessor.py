@@ -38,9 +38,8 @@ class FrameProcessor:
             print(self.frame_counter)
 
         if self.is_training:
-            pass
-            #if not self.is_in_train_segment():
-                #return False
+            if not self.is_in_train_segment():
+                return False
 
         self.list_frames_batch.append((self.frame_counter, frame))
         if self.frame_counter % self.bg_image.frame_bg_sample_freq == 0:
