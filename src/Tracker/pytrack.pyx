@@ -5,6 +5,7 @@ cdef extern from "structures.h":
         float x
         float y
         int frame_num
+        int classified
 
     struct FrameClassified:
         int frame_num
@@ -30,5 +31,5 @@ cdef class PyTrack:
         self.track.track_frames_batch(all_contour_locations, all_contour_classifications, all_frame_nums_batch)
     def training_track_frame(self, contour_locations, flattened_28x28_tag_matrices, frame_num):
         self.track.training_track_frame(contour_locations, flattened_28x28_tag_matrices, frame_num)
-    def get_all_bees(self):
+    def get_all_bees_data(self):
         return self.track.get_all_bees_data()

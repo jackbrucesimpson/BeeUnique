@@ -2,11 +2,15 @@ import numpy as np
 import cv2
 import os
 import sys
+import time
 
 from Processor import Stream
 from Processor import FrameProcessor
 
 def main():
+
+    start_time = time.time()
+
     if len(sys.argv) != 5:
         print("Need input video, output directory, experiment name, and training arguments")
         sys.exit(1)
@@ -20,9 +24,14 @@ def main():
         if enough_frames_to_process:
             fp.parallel_process_frames()
 
-    if len(fp.list_frames) > 0:
+    if len(fp.list_frames_batch) > 0:
         fp.parallel_process_frames()
     fp.output_data()
+
+    end_time = time.time()
+    print('Execution time in seconds:', end_time-start_time)
+    print(fp.pp_time)
+    print(fp.track_time)
 
 if __name__ == "__main__":
     main()

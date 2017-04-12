@@ -13,58 +13,34 @@ else:
 
 class Stream:
     def __init__(self, video_path, queue_size=256):
-        # initialize the file video stream along with the boolean
-        # used to indicate if the thread should be stopped or not
-        self.stream = cv2.VideoCapture(video_path)
-        self.streaming = True
-        self.frames_queued = True
-
-        # initialize the queue used to store frames read from
-        # the video file
+        self.video_stream = cv2.VideoCapture(video_path)
+        self.is_streaming = True
         self.Q = Queue(maxsize=queue_size)
 
     def start(self):
-        # start a thread to read frames from the file video stream
         t = Thread(target=self.update, args=())
         t.daemon = True
         t.start()
         return self
 
     def update(self):
-
-        # keep looping infinitely
         while True:
-            # if the thread indicator variable is set, stop the
-            # thread
-            #if self.stopped:
-                #return
-
-            # otherwise, ensure the queue has room in it
             if not self.Q.full():
-                # read the next frame from the file
-                (grabbed, frame) = self.stream.read()
-
-                # if the `grabbed` boolean is `False`, then we have
-                # reached the end of the video file
-                if not grabbed:
-                    self.stop_streaming()
-                    return
-
-                # add the frame to the queue
+                read_successful, frame = self.video_stream.read() # get next frame
+                if not read_successful:
+                    self.is_streaming = False
+                    break
                 self.Q.put(frame)
 
     def read(self):
-        # return next frame in the queue
-        if self.Q.qsize() > 0:
-            return self.Q.get()
-        elif self.streaming:
-            time.sleep(2)
-            return self.Q.get()
-        else:
-            self.frames_queued = False
+        return self.Q.get()
 
     def processing_frames(self):
-        return self.frames_queued
-
-    def stop_streaming(self):
-        self.streaming = False
+        if not self.Q.empty():
+            return True
+        else:
+            if self.is_streaming:
+                time.sleep(1)
+                return True
+            else:
+                return False

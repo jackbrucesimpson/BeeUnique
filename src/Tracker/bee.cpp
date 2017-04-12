@@ -1,6 +1,7 @@
 #include "bee.h"
 
 #include <unordered_map>
+#include <iostream>
 
 const int MIN_NUM_RECENT_CLASSIFICATIONS = 10;
 const int HALF_MIN_NUM_RECENT_CLASSIFICATIONS = MIN_NUM_RECENT_CLASSIFICATIONS / 2;
@@ -99,14 +100,16 @@ void Bee::merge_recent_points_classifications () {
     recent_path.clear ();
     recent_classifications.clear ();
 
-    int classifications_index = 0;
-    for (int i = 0; i < path.size (); i++) {
-        if (path[i].frame_num == classifications[classifications_index].frame_num) {
-            path[i].classified = classifications[classifications_index].classified;
-            classifications_index++;
-        }
-        else {
-            path[i].classified = UNKNOWN_CLASS;
+    if (classifications.size() > 0) {
+        int classifications_index = 0;
+        for (int i = 0; i < path.size (); i++) {
+            if (path[i].frame_num == classifications[classifications_index].frame_num) {
+                path[i].classified = classifications[classifications_index].classified;
+                classifications_index++;
+            }
+            else {
+                path[i].classified = UNKNOWN_CLASS;
+            }
         }
     }
 

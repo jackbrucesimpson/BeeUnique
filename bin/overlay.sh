@@ -7,4 +7,4 @@ set -e
 filename_path="/Users/jacksimpson/Data/beeunique/raw/2017-02-14_22-22-15.mp4"
 database_file_path="/Users/jacksimpson/Data/beeunique/output/Caffeine_Unique_Tags/Caffeine_Unique_Tags.db"
 
-python ../src/track.py $filename_path $database_file_path
+python ../src/overlay.py $filename_path $database_file_path

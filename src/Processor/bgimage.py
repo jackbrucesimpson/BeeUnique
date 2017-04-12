@@ -18,9 +18,9 @@ class BGImage:
 
     def output_bg_image(self, experiment_directory, video_filename):
         clahe = cv2.createCLAHE(clipLimit=10.0, tileGridSize=(9,9))
-        img = self.sum_matrix_bg / self.num_frames_averaged
-        img_uint8 = self.sum_matrix_bg.astype(np.uint8)
-        clahe_img = clahe.apply(img_uint8)
+        norm_img = self.sum_matrix_bg / self.num_frames_averaged
+        norm_img = norm_img.astype(np.uint8)
+        clahe_img = clahe.apply(norm_img)
 
         image_filename = video_filename + '.png'
         file_output = os.path.join(experiment_directory, image_filename)

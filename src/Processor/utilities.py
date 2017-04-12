@@ -5,7 +5,7 @@ import numpy as np
 from datetime import datetime
 
 def segment_frame(counter_frame):
-    rect_dims = 15
+    rect_dims = 14
     frame_num, frame = counter_frame
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     smoothed_frame = cv2.GaussianBlur(gray_frame, (9, 9), 0)
@@ -16,17 +16,16 @@ def segment_frame(counter_frame):
     abs_grad_y = cv2.convertScaleAbs(grad_y)
     scharr = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
     ret, thresh = cv2.threshold(scharr, 70, 255, 0)
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(13, 13))
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(13, 13))
     closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
     tag_locs = []
     tag_images = []
-
     contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         if cv2.contourArea(cnt) > 100:
             centre, width_height, rotation = cv2.minAreaRect(cnt)
-            tag_locs.append({'x': centre[0], 'y': centre[1], 'frame_num': frame_num})
+            tag_locs.append({'x': centre[0], 'y': centre[1], 'frame_num': frame_num, 'classified': 0})
             if width_height[0] > 27 and abs(width_height[0] - width_height[1]) < 4 and width_height[0] < 100:
                 extracted_tag_matrix = gray_frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
                 tag_images.append(extracted_tag_matrix)
@@ -38,8 +37,13 @@ def segment_frame(counter_frame):
 def get_video_filename(video_path):
     head, tail = os.path.split(video_path)
     str_date_time = os.path.splitext(tail)[0]
-    #dt = datetime.strptime(str_date_time, "%Y-%m-%d_%H-%M-%S")
     return str_date_time
+
+def create_dir_check_exists(dir_path, new_dir):
+    new_directory = os.path.join(dir_path, new_dir)
+    if not os.path.exists(new_directory):
+        os.makedirs(new_directory)
+    return new_directory
 
 def create_experiment_directory(output_directory, experiment_name):
     experiment_directory = os.path.join(output_directory, experiment_name)

@@ -5,10 +5,10 @@
 
 #define BEST_MATCH_FRAMES_SINCE_LAST_SEEN 1000
 #define CLOSEST_MATCH_DISTANCE 100000
-#define FRAMES_BEFORE_EXTINCTION 75
+#define FRAMES_BEFORE_EXTINCTION 80
 #define SEARCH_SURROUNDING_AREA 200
 #define SEARCH_EXPANSION_BY_FRAME 20
-#define MIN_CLOSENESS_BEFORE_DELETE 30
+#define MIN_CLOSENESS_BEFORE_DELETE 60
 #define UNKNOWN_CLASS 0
 
 
@@ -148,6 +148,7 @@ std::vector<OutputBeeData> Track::get_all_bees_data () {
             non_merged_bees_data.push_back (bee_data);
         }
     }
+
     return non_merged_bees_data;
 }
 
@@ -159,8 +160,6 @@ float Track::euclidian_distance (Point p1, Point p2) {
 
 void Track::training_track_frame (std::vector<Point> contour_locations, std::vector<std::vector<int>> flattened_28x28_tag_matrices, int frame_num) {
     video_frame_num = frame_num;
-    //std::cout << video_frame_num << std::endl;
-    //std::cout << contour_locations[0].x << std::endl;
 
     for (int i = 0; i < contour_locations.size (); i++) {
         bool new_bee_found = training_identify_past_location(contour_locations, flattened_28x28_tag_matrices[i], i);
