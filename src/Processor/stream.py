@@ -12,7 +12,7 @@ else:
     from Queue import Queue
 
 class Stream:
-    def __init__(self, video_path, queue_size=256):
+    def __init__(self, video_path, queue_size):
         self.video_stream = cv2.VideoCapture(video_path)
         self.is_streaming = True
         self.Q = Queue(maxsize=queue_size)
