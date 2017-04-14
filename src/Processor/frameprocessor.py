@@ -15,7 +15,7 @@ from db import DB
 from pytrack import PyTrack
 
 class FrameProcessor:
-    def __init__(self, video_path, output_directory, experiment_name, is_training):
+    def __init__(self, video_path, output_directory, experiment_name, is_training, skip_video_if_in_db, num_frames_batch_process, n_processes, chunksize):
         self.is_training = is_training
         self.video_filename = get_video_filename(video_path)
         self.experiment_directory = create_dir_check_exists(output_directory, experiment_name)
@@ -29,9 +29,20 @@ class FrameProcessor:
         self.list_frames_batch = []
         self.frame_counter = 0
 
-        self.num_frames_batch_process = 100
-        self.n_processes = 8
-        self.chunksize = 2
+        self.num_frames_batch_process = num_frames_batch_process
+        self.n_processes = n_processes
+        self.chunksize = chunksize
+
+        db_filename = self.experiment_name + '.db'
+        self.database_file_path = os.path.join(self.experiment_directory, db_filename)
+
+        if skip_video_if_in_db and os.path.isfile(self.database_file_path):
+            db = DB(self.database_file_path)
+            video_id, dt = db.get_video_id_start_datetime(self.video_filename)
+            db.close_conn()
+            if video_id is not None:
+                print('Video previously processed', self.video_filename)
+                sys.exit(0)
 
     def append_frame_increment_counter(self, frame):
         if self.frame_counter % 100 == 0:
@@ -113,9 +124,7 @@ class FrameProcessor:
     def output_data (self):
         self.bg_image.output_bg_image(self.experiment_directory, self.video_filename)
 
-        db_filename = self.experiment_name + '.db'
-        database_file_path = os.path.join(self.experiment_directory, db_filename)
-        db = DB(database_file_path)
+        db = DB(self.database_file_path)
 
         video_id = db.insert_video_info(self.video_filename)
         bee_id = db.get_next_bee_id(video_id)
