@@ -23,7 +23,7 @@ class FrameProcessor:
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
         # frame nums for 5 minute training segments 0-5, 15-20, 30-35, 45-50 minutes @ 20 fps
-        self.train_3_min_segment = ((0, 3000), (18000, 21000), (36000, 39000), (54000, 57000))
+        self.train_3_min_segment = ((0, 3000), (18000, 21000), (36000, 39000), (54000, 57000))#((0, 100), (300, 400))#
         self.segment_index = 0
 
         self.list_frames_batch = []
@@ -44,13 +44,13 @@ class FrameProcessor:
                 print('Video previously processed', self.video_filename)
                 sys.exit(0)
 
-    def append_frame_increment_counter(self, frame):
+    def append_frame_process(self, frame):
         if self.frame_counter % 100 == 0:
             print(self.frame_counter)
 
         if self.is_training:
             if not self.is_in_train_segment():
-                return False
+                return
 
         self.list_frames_batch.append((self.frame_counter, frame))
         if self.frame_counter % self.bg_image.frame_bg_sample_freq == 0:
@@ -58,11 +58,8 @@ class FrameProcessor:
 
         self.frame_counter += 1
 
-        # check if enough frames to process
         if self.frame_counter % self.num_frames_batch_process == 0:
-            return True
-        else:
-            return False
+            self.parallel_process_frames()
 
     def is_in_train_segment(self):
         # if training, only process 4 blocks of 3 minutes from video
@@ -100,20 +97,22 @@ class FrameProcessor:
 
     def training_track(self, df):
         df['tag_images_flat'] = df['tag_images'].apply(lambda x: x.flatten().tolist() if x is not None else [])
-        for i in range(df['frame_num'].min(), df['frame_num'].max() + 1):
-            df_frame_num = df[df['frame_num']==i]
-            self.pytrack.training_track_frame(list(df_frame_num['tag_locs']), list(df_frame_num['tag_images_flat']), i)
+        sorted_df = df.sort_values(['frame_num'], ascending=True)
+        frame_nums_current_batch = sorted_df['frame_num'].unique()
+        for fnum in frame_nums_current_batch:
+            df_frame_num = sorted_df[sorted_df['frame_num']==fnum]
+            self.pytrack.training_track_frame(list(df_frame_num['tag_locs']), list(df_frame_num['tag_images_flat']), fnum)
 
     def track(self, df):
         df_tags_predicted = df[df['tag_images'].notnull()]
         df_tags_not_predicted = df[df['tag_images'].isnull()]
         #df_tags_predicted['tag_classes'] = # predict tags
-
         df_classified = pd.concat([df_tags_predicted, df_tags_not_predicted], ignore_index=True)
+        #sorted_df = df.sort_values(['frame_num'], ascending=True)
         batch_frame_output = {'tag_locs':[], 'tag_classes':[], 'frame_num':[]}
 
         frame_groups = df_classified.groupby('frame_num')
-        for i in range(df_classified['frame_num'].min(), df_classified['frame_num'].max() + 1):
+        for i in range(int(df_classified['frame_num'].min()), int(df_classified['frame_num'].max() + 1)):
             frame_df = frame_groups.get_group(i)
             batch_frame_output['tag_locs'].append(list(frame_df['tag_locs']))
             batch_frame_output['tag_classes'].append(list(frame_df['tag_classes']))

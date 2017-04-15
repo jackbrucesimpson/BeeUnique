@@ -30,9 +30,7 @@ def main():
 
     while stream.processing_frames():
         frame = stream.read()
-        enough_frames_to_process = fp.append_frame_increment_counter(frame)
-        if enough_frames_to_process:
-            fp.parallel_process_frames()
+        fp.append_frame_process(frame)
 
     if len(fp.list_frames_batch) > 0:
         fp.parallel_process_frames()
