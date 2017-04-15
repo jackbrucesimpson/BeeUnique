@@ -107,16 +107,17 @@ class FrameProcessor:
         df_tags_predicted = df[df['tag_images'].notnull()]
         df_tags_not_predicted = df[df['tag_images'].isnull()]
         #df_tags_predicted['tag_classes'] = # predict tags
-        df_classified = pd.concat([df_tags_predicted, df_tags_not_predicted], ignore_index=True)
-        #sorted_df = df.sort_values(['frame_num'], ascending=True)
-        batch_frame_output = {'tag_locs':[], 'tag_classes':[], 'frame_num':[]}
 
-        frame_groups = df_classified.groupby('frame_num')
-        for i in range(int(df_classified['frame_num'].min()), int(df_classified['frame_num'].max() + 1)):
-            frame_df = frame_groups.get_group(i)
-            batch_frame_output['tag_locs'].append(list(frame_df['tag_locs']))
-            batch_frame_output['tag_classes'].append(list(frame_df['tag_classes']))
-            batch_frame_output['frame_num'].append(i)
+        df_classified = pd.concat([df_tags_predicted, df_tags_not_predicted], ignore_index=True)
+        df_classified_sorted = df_classified.sort_values(['frame_num'], ascending=True)
+        frame_nums_current_batch = df_classified_sorted['frame_num'].unique()
+
+        batch_frame_output = {'tag_locs':[], 'tag_classes':[], 'frame_num':[]}
+        for fnum in frame_nums_current_batch:
+            df_frame_num = df_classified_sorted[df_classified_sorted['frame_num']==fnum]
+            batch_frame_output['tag_locs'].append(list(df_frame_num['tag_locs']))
+            batch_frame_output['tag_classes'].append(list(df_frame_num['tag_classes']))
+            batch_frame_output['frame_num'].append(fnum)
 
         self.pytrack.track_frames_batch(batch_frame_output['tag_locs'], batch_frame_output['tag_classes'], batch_frame_output['frame_num'])
 
