@@ -45,20 +45,19 @@ class FrameProcessor:
                 sys.exit(0)
 
     def append_frame_process(self, frame):
-        if self.frame_counter % 100 == 0:
-            print(self.frame_counter)
-
         if self.is_training:
             if not self.is_in_train_segment():
                 return
 
         self.list_frames_batch.append((self.frame_counter, frame))
+
         if self.frame_counter % self.bg_image.frame_bg_sample_freq == 0:
             self.bg_image.update_bg_average_image(frame)
 
         self.frame_counter += 1
 
         if self.frame_counter % self.num_frames_batch_process == 0:
+            print(self.frame_counter)
             self.parallel_process_frames()
 
     def is_in_train_segment(self):
