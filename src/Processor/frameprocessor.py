@@ -22,9 +22,7 @@ class FrameProcessor:
         self.experiment_name = experiment_name
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
-        # frame nums for 2 minute training segments: 0-2 & 30-32 mins @ 20 fps
-        self.train_3_min_segment = ((0, 2400), (36000, 38400))
-        self.segment_index = 0
+        self.train_up_to_frame_num = 3600
 
         self.list_frames_batch = []
         self.frame_counter = 0
@@ -45,10 +43,6 @@ class FrameProcessor:
                 sys.exit(0)
 
     def append_frame_process(self, frame):
-        if self.is_training:
-            if not self.is_in_train_segment():
-                return
-
         self.list_frames_batch.append((self.frame_counter, frame))
 
         if self.frame_counter % self.bg_image.frame_bg_sample_freq == 0:
@@ -57,29 +51,15 @@ class FrameProcessor:
         self.frame_counter += 1
 
         if self.frame_counter % self.num_frames_batch_process == 0:
-            print(self.frame_counter)
             self.parallel_process_frames()
 
-    def is_in_train_segment(self):
-        # if training, only process 4 blocks of 3 minutes from video
-        if self.frame_counter >= self.train_3_min_segment[self.segment_index][0] and self.frame_counter <= self.train_3_min_segment[self.segment_index][1]:
-            return True
-        else:
-            if self.frame_counter > self.train_3_min_segment[self.segment_index][0]:
-                if len(self.train_3_min_segment) - 1 > self.segment_index:
-                    self.segment_index += 1
-                    self.frame_counter += 1
-                    self.parallel_process_frames()
-                    return False
-                else:
-                    print('Finishing training processing of video')
-                    self.output_data()
-                    sys.exit(0)
-            else:
-                self.frame_counter += 1
-                return False
+            if self.is_training and self.frame_counter > self.train_up_to_frame_num:
+                print('Finished tag training extraction of video')
+                self.output_data()
+                sys.exit(0)
 
     def parallel_process_frames(self):
+        print(self.frame_counter)
         processes = multiprocessing.Pool(processes=self.n_processes)
         frames_output_dfs = processes.map(func=segment_frame, iterable=self.list_frames_batch, chunksize=self.chunksize)
         processes.close()
