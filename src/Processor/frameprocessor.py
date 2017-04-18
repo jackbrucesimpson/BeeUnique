@@ -22,8 +22,8 @@ class FrameProcessor:
         self.experiment_name = experiment_name
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
-        # frame nums for 5 minute training segments 0-5, 15-20, 30-35, 45-50 minutes @ 20 fps
-        self.train_3_min_segment = ((0, 3000), (18000, 21000), (36000, 39000), (54000, 57000))#((0, 100), (300, 400))#
+        # frame nums for 2 minute training segments: 0-2 & 30-32 mins @ 20 fps
+        self.train_3_min_segment = ((0, 2400), (36000, 38400))
         self.segment_index = 0
 
         self.list_frames_batch = []
