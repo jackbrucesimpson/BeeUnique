@@ -7,13 +7,19 @@ from Processor import Stream
 from Processor import FrameOverlayer
 
 def main():
-    if len(sys.argv) != 4:
-        print("Need input video, path to database file, and number of frames to store in memory")
+    if len(sys.argv) != 6:
+        print("Incorrect arguments")
         sys.exit(1)
 
     video_path = sys.argv[1]
     database_file_path = sys.argv[2]
-    num_frames_thread_queue = int(sys.argv[3])
+    create_video = bool(int(sys.argv[3]))
+    output_video_file = sys.argv[4]
+    num_frames_thread_queue = int(sys.argv[5])
+
+    if create_video:
+        fourcc = cv2.cv.CV_FOURCC(*'mp4v')
+        out = cv2.VideoWriter(output_video_file, fourcc, fps=20.0, frameSize=(3840, 2160), isColor=True)
 
     stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
     fo = FrameOverlayer(video_path=video_path, database_file_path = database_file_path)
@@ -21,9 +27,17 @@ def main():
     while stream.processing_frames():
         frame = stream.read()
         overlaid_frame = fo.overlay_frame(frame)
-        cv2.imshow('frame', overlaid_frame)
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            break
+        resized_frame = cv2.resize(overlaid_frame, (1280, 720));
+        #cv2.imshow('frame', resized_frame)
+        #if cv2.waitKey(1) == ord('q'):
+            #break
+
+        if create_video:
+            out.write(overlaid_frame)
+
+    if create_video:
+        out.release()
+    cv2.destroyAllWindows()
 
 if __name__ == "__main__":
     main()

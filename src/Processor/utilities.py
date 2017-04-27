@@ -35,6 +35,32 @@ def segment_frame(counter_frame):
 
     return pd.DataFrame({'frame_num': frame_num, 'tag_locs': tag_locs, 'tag_images': tag_images})
 
+def view_segment_frame(counter_frame):
+    rect_dims = 14
+    frame_num, frame = counter_frame
+    #print(frame.mean())
+    #if frame.mean() > 35:
+        #return np.zeros((2160, 3840), dtype=np.uint8)
+    frame_height, frame_width, frame_dims = frame.shape
+    gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    smoothed_frame = cv2.GaussianBlur(gray_frame, (9, 9), 0)
+
+    grad_x = cv2.Sobel(smoothed_frame, cv2.CV_16S, 1, 0, ksize=3, scale=1.5, delta=0, borderType=cv2.BORDER_DEFAULT)
+    grad_y = cv2.Sobel(smoothed_frame, cv2.CV_16S, 0, 1, ksize=3, scale=1.5, delta=0, borderType=cv2.BORDER_DEFAULT)
+    abs_grad_x = cv2.convertScaleAbs(grad_x)
+    abs_grad_y = cv2.convertScaleAbs(grad_y)
+    scharr = cv2.addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0)
+    ret, thresh = cv2.threshold(scharr, 70, 255, 0)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(13, 13))
+    closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
+
+    contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    for cnt in contours:
+        if cv2.contourArea(cnt) > 100:
+            cv2.drawContours(frame, [cnt], 0, (0,255,0), 3)
+
+    return frame
+
 def get_video_filename(video_path):
     head, tail = os.path.split(video_path)
     str_date_time = os.path.splitext(tail)[0]

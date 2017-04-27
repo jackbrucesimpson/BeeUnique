@@ -22,7 +22,7 @@ class FrameProcessor:
         self.experiment_name = experiment_name
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
-        self.train_up_to_frame_num = 3600
+        self.train_up_to_frame_num = 9600
 
         self.list_frames_batch = []
         self.frame_counter = 0
@@ -101,7 +101,7 @@ class FrameProcessor:
         self.pytrack.track_frames_batch(batch_frame_output['tag_locs'], batch_frame_output['tag_classes'], batch_frame_output['frame_num'])
 
     def output_data (self):
-        self.bg_image.output_bg_image(self.experiment_directory, self.video_filename)
+        #self.bg_image.output_bg_image(self.experiment_directory, self.video_filename)
 
         db = DB(self.database_file_path)
 
@@ -121,7 +121,8 @@ class FrameProcessor:
 
             if self.is_training and len(bee['flattened_28x28_tag_matrices']) > 0:
                 tag_directory = create_dir_check_exists(self.experiment_directory, self.video_filename)
-                bees_tag_directory = create_dir_check_exists(tag_directory, uuid.uuid4().hex)
+                bees_tag_directory = create_dir_check_exists(tag_directory, str(bee_id))
+                #bees_tag_directory = create_dir_check_exists(tag_directory, uuid.uuid4().hex)
                 for flattened_28x28_tag_matrix in bee['flattened_28x28_tag_matrices']:
                     tag_matrix = np.array(flattened_28x28_tag_matrix, dtype=np.uint8).reshape(28, 28)
                     tag_filename = uuid.uuid4().hex + '.png'

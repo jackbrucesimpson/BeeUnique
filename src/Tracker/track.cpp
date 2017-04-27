@@ -6,9 +6,9 @@
 #define BEST_MATCH_FRAMES_SINCE_LAST_SEEN 1000
 #define CLOSEST_MATCH_DISTANCE 100000
 #define FRAMES_BEFORE_EXTINCTION 60
-#define SEARCH_SURROUNDING_AREA 200
-#define SEARCH_EXPANSION_BY_FRAME 20
-#define MIN_CLOSENESS_BEFORE_DELETE 30
+#define SEARCH_SURROUNDING_AREA 60
+#define SEARCH_EXPANSION_BY_FRAME 30
+#define MIN_CLOSENESS_BEFORE_DELETE 1
 #define UNKNOWN_CLASS 0
 
 
@@ -59,7 +59,7 @@ bool Track::identify_past_location (std::vector<Point> contour_locations, int co
         }
 
         float closeness_bee_current_contour = euclidian_distance (current_tag_contour, last_frame_loc_of_bee);
-        if (closeness_bee_current_contour > SEARCH_SURROUNDING_AREA || closeness_bee_current_contour > frames_since_last_seen * SEARCH_EXPANSION_BY_FRAME) {
+        if (closeness_bee_current_contour > SEARCH_SURROUNDING_AREA) {
             continue;
         }
 
@@ -194,7 +194,7 @@ bool Track::training_identify_past_location (std::vector<Point> contour_location
         }
 
         float closeness_bee_current_contour = euclidian_distance (current_tag_contour, last_frame_loc_of_bee);
-        if (closeness_bee_current_contour > SEARCH_SURROUNDING_AREA || closeness_bee_current_contour > frames_since_last_seen * SEARCH_EXPANSION_BY_FRAME) {
+        if (closeness_bee_current_contour > SEARCH_SURROUNDING_AREA) {
             continue;
         }
 
