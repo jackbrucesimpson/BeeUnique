@@ -6,7 +6,7 @@ set -e
 #/media/jack/ID2
 #/home/jack/Data/beeunique/output
 #/Users/jacksimpson/Data/beeunique/raw
-VIDEO_DIRECTORY="/Users/jacksimpson/Data/beeunique/raw/tags"
+VIDEO_DIRECTORY="/Volumes/drive10/Peace_Plane_T_H"
 OUTPUT_DIRECTORY="/Users/jacksimpson/Data/beeunique/output"
 EXPERIMENT_NAME="Caffeine_Unique_Tags"
 TRAINING=1 # 0:False, 1:True

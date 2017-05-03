@@ -9,16 +9,10 @@
 #define SEARCH_SURROUNDING_AREA 60
 #define SEARCH_EXPANSION_BY_FRAME 30
 #define MIN_CLOSENESS_BEFORE_DELETE 1
-#define UNKNOWN_CLASS 0
+#define UNKNOWN_CLASS -1
 
 
 Track::Track () {}
-
-void Track::track_frames_batch (std::vector<std::vector<Point>> all_contour_locations, std::vector<std::vector<int>> all_contour_classifications, std::vector<int> all_frame_nums_batch) {
-    for (int i = 0; i < all_contour_locations.size (); i++) {
-        track_frame (all_contour_locations[i], all_contour_classifications[i], all_frame_nums_batch[i]);
-    }
-}
 
 void Track::track_frame (std::vector<Point> contour_locations, std::vector<int> contour_classifications, int frame_num) {
     video_frame_num = frame_num;

@@ -11,8 +11,6 @@ class Track {
 public:
     Track();
 
-    void track_frames_batch (std::vector<std::vector<Point>> all_contour_locations, std::vector<std::vector<int>> all_contour_classifications, std::vector<int> all_frame_nums_batch);
-
     void track_frame (std::vector<Point> contour_locations, std::vector<int> contour_classifications, int frame_num);
 
     void training_track_frame (std::vector<Point> contour_locations, std::vector<std::vector<int>> flattened_28x28_tag_matrices, int frame_num);

@@ -100,6 +100,10 @@ void Bee::merge_recent_points_classifications () {
     recent_path.clear ();
     recent_classifications.clear ();
 
+    //for (int i = 0; i < classifications.size (); i++) {
+        //std::cout << classifications[i].classified << std::endl;
+    //}
+
     if (classifications.size() > 0) {
         int classifications_index = 0;
         for (int i = 0; i < path.size (); i++) {
@@ -107,9 +111,7 @@ void Bee::merge_recent_points_classifications () {
                 path[i].classified = classifications[classifications_index].classified;
                 classifications_index++;
             }
-            else {
-                path[i].classified = UNKNOWN_CLASS;
-            }
+            //std::cout << path[i].classified << std::endl;
         }
     }
 

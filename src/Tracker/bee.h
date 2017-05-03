@@ -1,7 +1,7 @@
 #include "structures.h"
 #include <vector>
 
-#define UNKNOWN_CLASS 0
+#define UNKNOWN_CLASS -1
 
 #ifndef __BEE_H__
 #define __BEE_H__

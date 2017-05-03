@@ -21,7 +21,7 @@ class FrameOverlayer:
         for row in frame_df.itertuples():
             cv2.rectangle(frame, (int(row.X-15), int(row.Y-15)), (int(row.X+15), int(row.Y+15)), (0,255,0), 2)
             #frame_class_bee_class_text = "{} {} {}".format(row.CLASSIFIED, row.CLASS_CLASSIFIED, row.BEE_ID)
-            frame_class_bee_class_text = str(row.BEE_ID)
+            frame_class_bee_class_text = str(row.CLASSIFIED)
             cv2.putText(frame, frame_class_bee_class_text, (int(row.X + self.offset), int(row.Y + self.offset)), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)
 
         self.frame_counter += 1

@@ -28,9 +28,9 @@ def main():
         frame = stream.read()
         overlaid_frame = fo.overlay_frame(frame)
         resized_frame = cv2.resize(overlaid_frame, (1280, 720));
-        #cv2.imshow('frame', resized_frame)
-        #if cv2.waitKey(1) == ord('q'):
-            #break
+        cv2.imshow('frame', resized_frame)
+        if cv2.waitKey(1) == ord('q'):
+            break
 
         if create_video:
             out.write(overlaid_frame)
