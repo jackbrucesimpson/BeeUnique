@@ -24,10 +24,13 @@ def segment_frame(counter_frame):
     tag_images = []
     contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
-        if cv2.contourArea(cnt) > 100:
-            centre, width_height, rotation = cv2.minAreaRect(cnt)
+        contour_area = cv2.contourArea(cnt)
+        if contour_area > 100:
+            centre, width_height, rotation = cv2.fitEllipse(cnt)
             tag_locs.append({'x': centre[0], 'y': centre[1], 'frame_num': frame_num, 'classified': 0})
-            if width_height[0] > 27 and abs(width_height[0] - width_height[1]) < 4 and width_height[0] < 100 and centre[0] - rect_dims > 0 and centre[0] + rect_dims < frame_width and centre[1] - rect_dims > 0 and centre[1] + rect_dims < frame_height:
+
+            if contour_area > 700 and width_height[0] > 26 and width_height[1] > 26 and abs(width_height[0] - width_height[1]) < 5 and width_height[0] < 90 and centre[0] - rect_dims > 0 \
+                            and centre[0] + rect_dims < frame_width and centre[1] - rect_dims > 0 and centre[1] + rect_dims < frame_height:
                 extracted_tag_matrix = gray_frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
                 tag_images.append(extracted_tag_matrix)
             else:

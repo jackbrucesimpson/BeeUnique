@@ -23,7 +23,7 @@ class FrameProcessor:
         self.experiment_name = experiment_name
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
-        self.train_up_to_frame_num = 24000#3000
+        self.train_up_to_frame_num = 1000
 
         if not self.is_training:
             this_dir, this_filename = os.path.split(__file__)
@@ -68,7 +68,7 @@ class FrameProcessor:
         if self.frame_counter % self.num_frames_batch_process == 0:
             self.parallel_process_frames()
 
-            if self.frame_counter > self.train_up_to_frame_num:#self.is_training and self.frame_counter > self.train_up_to_frame_num:
+            if self.frame_counter > self.is_training and self.frame_counter > self.train_up_to_frame_num:
                 print('Finished tag training extraction of video')
                 self.output_data()
                 sys.exit(0)
