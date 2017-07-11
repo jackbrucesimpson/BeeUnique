@@ -25,13 +25,19 @@ def segment_frame(counter_frame):
     contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         contour_area = cv2.contourArea(cnt)
-        if contour_area > 100:
+        if contour_area < 100:
+            continue
+        if contour_area > 300 and len(cnt) > 8:
             centre, width_height, rotation = cv2.fitEllipse(cnt)
-            tag_locs.append({'x': centre[0], 'y': centre[1], 'frame_num': frame_num, 'classified': 0})
+            tag_locs.append({'x': centre[0], 'y': centre[1]})
 
-            if contour_area > 700 and width_height[0] > 26 and width_height[1] > 26 and abs(width_height[0] - width_height[1]) < 5 and width_height[0] < 90 and centre[0] - rect_dims > 0 \
+            if width_height[0] > 23 and width_height[1] > 23 and abs(width_height[0] - width_height[1]) < 5 and width_height[0] < 90 and centre[0] - rect_dims > 0 \
                             and centre[0] + rect_dims < frame_width and centre[1] - rect_dims > 0 and centre[1] + rect_dims < frame_height:
                 extracted_tag_matrix = gray_frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
+
+                #extracted_tag_matrix = cv2.medianBlur(extracted_tag_matrix, 3);
+                #extracted_tag_matrix = cv2.filter2D(extracted_tag_matrix, cv2.CV_32F, kernel)
+
                 tag_images.append(extracted_tag_matrix)
             else:
                 tag_images.append(None)

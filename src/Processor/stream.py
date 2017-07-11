@@ -39,8 +39,13 @@ class Stream:
         if not self.Q.empty():
             return True
         else:
-            if self.is_streaming:
-                time.sleep(1)
-                return True
-            else:
-                return False
+            num_times_slept = 0
+            while self.is_streaming:
+                time.sleep(2)
+                num_times_slept += 1
+                if num_times_slept > 5:
+                    print('Problem accessing video')
+                    sys.exit(1)
+                if not self.Q.empty():
+                    return True
+            return False

@@ -23,7 +23,7 @@ class FrameProcessor:
         self.experiment_name = experiment_name
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
-        self.train_up_to_frame_num = 1000
+        self.train_up_to_frame_num = 2400
 
         if not self.is_training:
             this_dir, this_filename = os.path.split(__file__)
@@ -68,7 +68,8 @@ class FrameProcessor:
         if self.frame_counter % self.num_frames_batch_process == 0:
             self.parallel_process_frames()
 
-            if self.frame_counter > self.is_training and self.frame_counter > self.train_up_to_frame_num:
+            #if self.is_training and self.frame_counter > self.train_up_to_frame_num:
+            if self.frame_counter > self.train_up_to_frame_num:
                 print('Finished tag training extraction of video')
                 self.output_data()
                 sys.exit(0)
@@ -81,7 +82,7 @@ class FrameProcessor:
         processes.join()
 
         df = pd.concat(frames_output_dfs, ignore_index=True)
-        df['tag_classes'] = -1
+        df['tag_classes'] = 59
         if self.is_training:
             self.training_track(df)
         else:
@@ -115,9 +116,10 @@ class FrameProcessor:
         tag_image_array_tf_shaped = tag_image_array.reshape(tag_image_array.shape[0], 28, 28, 1)
         tag_image_array_tf_shaped_float = tag_image_array_tf_shaped.astype('float32')
         tag_image_array_tf_shaped_float /= 255
-        predict_probabilities = self.model.predict_proba(tag_image_array_tf_shaped_float)
-        classifications = [np.argmax(p) if np.amax(p) > 0.8 else -1 for p in predict_probabilities]
-        return classifications
+        #predict_probabilities = self.model.predict_proba(tag_image_array_tf_shaped_float)
+        predict_classes = self.model.predict_classes(tag_image_array_tf_shaped_float)
+        #classifications = [np.argmax(p) if np.amax(p) > 0.8 else -1 for p in predict_probabilities]
+        return predict_classes
 
     def output_data (self):
         #self.bg_image.output_bg_image(self.experiment_directory, self.video_filename)
