@@ -9,9 +9,8 @@ struct PointXY {
 };
 
 struct OutputBeeData {
-    std::vector<PointXY> path;
+    std::vector<PointXY> xy;
     std::vector<int> frame_nums;
-    std::vector<int> classified;
     std::vector<std::vector<int>> flattened_28x28_tag_matrices;
 };
 

@@ -20,8 +20,8 @@ def segment_frame(counter_frame):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(13, 13))
     closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
-    tag_locs = []
-    tag_images = []
+    frame_data = {'frame_num': frame_num, 'xy': [], 'flat_tag_matrices': []}
+
     contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
         contour_area = cv2.contourArea(cnt)
@@ -29,20 +29,18 @@ def segment_frame(counter_frame):
             continue
         if contour_area > 300 and len(cnt) > 8:
             centre, width_height, rotation = cv2.fitEllipse(cnt)
-            tag_locs.append({'x': centre[0], 'y': centre[1]})
+            frame_data['xy'].append({'x': centre[0], 'y': centre[1]})
 
             if width_height[0] > 23 and width_height[1] > 23 and abs(width_height[0] - width_height[1]) < 5 and width_height[0] < 90 and centre[0] - rect_dims > 0 \
                             and centre[0] + rect_dims < frame_width and centre[1] - rect_dims > 0 and centre[1] + rect_dims < frame_height:
+
                 extracted_tag_matrix = gray_frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
-
-                #extracted_tag_matrix = cv2.medianBlur(extracted_tag_matrix, 3);
-                #extracted_tag_matrix = cv2.filter2D(extracted_tag_matrix, cv2.CV_32F, kernel)
-
-                tag_images.append(extracted_tag_matrix)
+                flattened_extracted_tag_matrix = extracted_tag_matrix.flatten().tolist()
+                frame_data['flat_tag_matrices'].append(flattened_extracted_tag_matrix)
             else:
-                tag_images.append(None)
+                frame_data['flat_tag_matrices'].append([])
 
-    return pd.DataFrame({'frame_num': frame_num, 'tag_locs': tag_locs, 'tag_images': tag_images})
+    return frame_data
 
 def view_segment_frame(counter_frame):
     rect_dims = 14

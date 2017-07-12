@@ -12,7 +12,7 @@ def main():
         sys.exit(1)
 
     video_path = sys.argv[1]
-    database_file_path = sys.argv[2]
+    csv_file_path = sys.argv[2]
     create_video = bool(int(sys.argv[3]))
     output_video_file = sys.argv[4]
     num_frames_thread_queue = int(sys.argv[5])
@@ -22,7 +22,7 @@ def main():
         out = cv2.VideoWriter(output_video_file, fourcc, fps=20.0, frameSize=(3840, 2160), isColor=True)
 
     stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
-    fo = FrameOverlayer(video_path=video_path, database_file_path = database_file_path)
+    fo = FrameOverlayer(video_path=video_path, csv_file_path = csv_file_path)
 
     while stream.processing_frames():
         frame = stream.read()
