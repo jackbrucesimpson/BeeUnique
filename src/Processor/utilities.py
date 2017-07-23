@@ -20,6 +20,7 @@ def segment_frame(counter_frame):
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT,(13, 13))
     closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
+
     frame_data = {'frame_num': frame_num, 'xy': [], 'flat_tag_matrices': []}
 
     contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
