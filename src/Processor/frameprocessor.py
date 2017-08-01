@@ -22,8 +22,8 @@ class FrameProcessor:
         self.experiment_name = experiment_name
         self.bg_image = BGImage()
         self.pytrack = PyTrack()
-        self.train_up_to_frame_num = 3000
-        self.unknown_class = 59
+        self.train_up_to_frame_num = 2400
+        self.unknown_class = 3
 
         if not self.is_training:
             this_dir, this_filename = os.path.split(__file__)
@@ -48,8 +48,7 @@ class FrameProcessor:
         if self.frame_counter % self.num_frames_batch_process == 0:
             self.parallel_process_frames()
 
-            #if self.is_training and self.frame_counter > self.train_up_to_frame_num:
-            if self.frame_counter > self.train_up_to_frame_num:
+            if self.is_training and self.frame_counter > self.train_up_to_frame_num:
                 print('Finished tag training extraction of video')
                 self.output_data()
                 sys.exit(0)
@@ -111,8 +110,11 @@ class FrameProcessor:
         if not self.is_training:
             bees_df_tags_predicted['classifications'] = self.classify_tags(bees_df_tags_predicted['flattened_28x28_tag_matrices'])
 
-        df_bees_classified = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
-        del df_bees_classified['flattened_28x28_tag_matrices']
+        bees_classified_df = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
 
+        json_filename = os.path.join(self.experiment_directory , self.video_filename + '.json')
         csv_filename = os.path.join(self.experiment_directory , self.video_filename + '.csv')
-        df_bees_classified.to_csv(csv_filename)
+
+        bees_classified_df.to_json(json_filename)
+        del bees_classified_df['flattened_28x28_tag_matrices']
+        bees_classified_df.to_csv(csv_filename)

@@ -14,7 +14,7 @@ class FrameOverlayer:
 
     def overlay_frame(self, frame):
 
-        image_class_names = {0: 'CircleLine', 1: 'heart', 2: 'Note1', 3: 'DD', 4: 'Note2', 5: 'EE', 6: 'Pillars', 7: 'HH', 8: 'Ampersand', 9: 'Plant', 10: 'leaf', 11: 'arrowhollow', 12: 'nn', 13: 'Ankh', 14: 'sun', 15: 'TT', 16: 'Trident', 17: 'Asterisk', 18: 'UU', 19: '1', 20: '0', 21: '3', 22: '2', 23: '5', 24: '4', 25: '7', 26: '6', 27: '8', 28: 'Omega', 29: 'CircleCross', 30: 'AA', 31: 'SS', 32: 'Peace', 33: 'hash', 34: 'Tadpole', 35: 'ArrowLine', 36: 'Question', 37: 'RR', 38: 'PP', 39: 'lines3', 40: 'GG', 41: 'y', 42: 'XX', 43: 'ZZ', 44: 'radioactive', 45: 'Triangle', 46: 'Umbrella', 47: 'Dot', 48: 'a', 49: 'e', 50: 'Power', 51: 'KK', 52: 'h', 53: 'Queen', 54: 'Plane', 55: 'MM', 56: 'r', 57: 'circlehalf', 58: 'w', 59: 'unknown', 60: 'necklace', 61: 'Scissors'}
+        image_class_names = {0: 'CircleLine', 1: 'Leaf', 2: 'Note1', 3: 'Unknown', 4: 'DD', 5: 'Peace', 6: 'Question', 7: 'Pillars', 8: 'HH', 9: 'Ampersand', 10: 'PP', 11: 'Hash', 12: 'Power', 13: 'Ankh', 14: 'TT', 15: 'Trident', 16: 'Asterisk', 17: '4', 18: 'Lines3', 19: '1', 20: '0', 21: '3', 22: 'Plane', 23: '5', 24: 'CircleHalf', 25: '7', 26: 'Sun', 27: '8', 28: 'Omega', 29: 'ArrowHollow', 30: 'AA', 31: 'Note2', 32: 'Radioactive', 33: 'EE', 34: 'UU', 35: '6', 36: 'Plant', 37: 'GG', 38: 'XX', 39: 'ZZ', 40: 'Necklace', 41: 'Umbrella', 42: 'Triangle', 43: 'Dot', 44: 'a', 45: 'Heart', 46: 'e', 47: 'RR', 48: 'KK', 49: 'h', 50: 'Queen', 51: 'Tadpole', 52: 'n', 53: 'MM', 54: '2', 55: 'r', 56: 'ArrowLine', 57: 'y', 58: 'Scissors', 59: 'CircleCross'}
 
         frame_df = self.bees_paths_df[self.bees_paths_df['frame_nums']==self.frame_counter]
         frame_num_text = 'Frame: ' + str(self.frame_counter)
