@@ -25,6 +25,13 @@ class FrameProcessor:
         self.train_up_to_frame_num = 2400
         self.unknown_class = 3
 
+        self.json_filename = os.path.join(self.experiment_directory , self.video_filename + '.json')
+        self.csv_filename = os.path.join(self.experiment_directory , self.video_filename + '.csv')
+
+        if os.path.exists(self.csv_filename):
+            print('Video already processed')
+            sys.exit(0)
+
         if not self.is_training:
             this_dir, this_filename = os.path.split(__file__)
             data_path = os.path.join(this_dir, "data", "model.h5")
@@ -112,9 +119,6 @@ class FrameProcessor:
 
         bees_classified_df = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
 
-        json_filename = os.path.join(self.experiment_directory , self.video_filename + '.json')
-        csv_filename = os.path.join(self.experiment_directory , self.video_filename + '.csv')
-
-        bees_classified_df.to_json(json_filename)
+        bees_classified_df.to_json(self.json_filename)
         del bees_classified_df['flattened_28x28_tag_matrices']
-        bees_classified_df.to_csv(csv_filename)
+        bees_classified_df.to_csv(self.csv_filename)

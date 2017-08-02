@@ -74,6 +74,10 @@ def get_video_filename(video_path):
     str_date_time = os.path.splitext(tail)[0]
     return str_date_time
 
+def get_video_datetime(video_path):
+    video_filename = get_video_filename(video_path)
+    return datetime.strptime(video_filename, "%Y-%m-%d_%H-%M-%S")
+
 def create_dir_check_exists(dir_path, new_dir):
     new_directory = os.path.join(dir_path, new_dir)
     if not os.path.exists(new_directory):
