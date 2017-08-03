@@ -20,13 +20,17 @@ class FrameProcessor:
         self.video_filename = get_video_filename(video_path)
         self.experiment_directory = create_dir_check_exists(output_directory, experiment_name)
         self.experiment_name = experiment_name
-        self.bg_image = BGImage()
         self.pytrack = PyTrack()
         self.train_up_to_frame_num = 2400
         self.unknown_class = 3
 
-        self.json_filename = os.path.join(self.experiment_directory , self.video_filename + '.json')
-        self.csv_filename = os.path.join(self.experiment_directory , self.video_filename + '.csv')
+        csv_dir = create_dir_check_exists(self.experiment_directory, 'csv')
+        json_dir = create_dir_check_exists(self.experiment_directory, 'json')
+        bg_image_dir = create_dir_check_exists(self.experiment_directory, 'background')
+
+        self.json_filename = os.path.join(csv_dir, self.video_filename + '.json')
+        self.csv_filename = os.path.join(json_dir, self.video_filename + '.csv')
+        self.bg_image = BGImage(bg_image_dir, video_filename)
 
         if os.path.exists(self.csv_filename):
             print('Video already processed')
@@ -82,7 +86,8 @@ class FrameProcessor:
         return list(predict_classes)
 
     def output_training_images(self, bee_id, flattened_28x28_tag_matrices):
-        tag_directory = create_dir_check_exists(self.experiment_directory, self.video_filename)
+        training_images_dir = create_dir_check_exists(self.experiment_directory, 'training_images')
+        tag_directory = create_dir_check_exists(training_images_dir, self.video_filename)
         bees_tag_directory = create_dir_check_exists(tag_directory, str(bee_id))
         for flattened_28x28_tag_matrix in flattened_28x28_tag_matrices:
             if len(flattened_28x28_tag_matrix) > 0:
@@ -92,7 +97,7 @@ class FrameProcessor:
                 cv2.imwrite(output_tag_image_path, tag_matrix)
 
     def output_data (self):
-        self.bg_image.output_bg_image(self.experiment_directory, self.video_filename)
+        self.bg_image.output_bg_image()
 
         all_bees_data = self.pytrack.get_all_bees_data()
         bees_dict = {'bee_id': [], 'xy': [], 'frame_nums': [], 'flattened_28x28_tag_matrices': []}

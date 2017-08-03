@@ -11,7 +11,9 @@ from Processor import get_video_datetime, create_dir_check_exists
 def main():
     datetime_images_dict = {}
 
-    image_directory_path = '/home/jack/Data/Caffeine_Unique_Tags/'
+    experiment_directory = '/home/jack/Data/Caffeine_Unique_Tags'
+    image_directory_path = os.path.join(experiment_directory, 'background') + '/'
+
     for bg_image_file in glob.glob(image_directory_path + '*.png'):
         video_dt = get_video_datetime(bg_image_file)
         video_date = video_dt.date()
@@ -31,9 +33,9 @@ def main():
         norm_img = norm_img.astype(np.uint8)
 
         image_filename = str(date) + '.png'
-        #file_output = os.path.join(experiment_directory, image_filename)
-        cv2.imwrite(image_filename, norm_img)
-
+        averaged_img_directory = create_dir_check_exists(experiment_directory, 'daily_background')
+        file_output = os.path.join(averaged_img_directory, image_filename)
+        cv2.imwrite(file_output, norm_img)
 
 if __name__ == "__main__":
     main()

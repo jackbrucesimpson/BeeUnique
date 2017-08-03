@@ -46,9 +46,7 @@ def segment_frame(counter_frame):
 def view_segment_frame(counter_frame):
     rect_dims = 14
     frame_num, frame = counter_frame
-    #print(frame.mean())
-    #if frame.mean() > 35:
-        #return np.zeros((2160, 3840), dtype=np.uint8)
+
     frame_height, frame_width, frame_dims = frame.shape
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     smoothed_frame = cv2.GaussianBlur(gray_frame, (9, 9), 0)
@@ -95,3 +93,18 @@ def create_tag_directory(experiment_directory, bee_id):
     if not os.path.exists(tag_directory):
         os.makedirs(tag_directory)
     return tag_directory
+
+def read_coordinates_file(coord_file_path):
+    file_extension = coord_file_path.split('.')[-1]
+    if file_extension == 'csv':
+        df = pd.read_csv(coord_file_path)
+    elif file_extension == 'json':
+        df = pd.read_json(coord_file_path)
+    else:
+        print('Unknown coordinate file type')
+        sys.exit(0)
+
+    # turn coordinate column into x,y dictionary
+    df['xy'] = df['xy'].apply(lambda x: eval(x))
+
+    return df

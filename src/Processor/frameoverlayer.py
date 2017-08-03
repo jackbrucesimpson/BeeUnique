@@ -1,4 +1,4 @@
-from utilities import get_video_filename
+from utilities import get_video_filename, read_coordinates_file
 import pandas as pd
 import cv2
 
@@ -7,10 +7,7 @@ class FrameOverlayer:
         self.frame_counter = 0
         self.offset = -20
         video_filename = get_video_filename(video_path)
-        self.bees_paths_df = pd.read_csv(csv_file_path)
-        #print(self.bees_paths_df.head())
-        self.bees_paths_df['xy'] = self.bees_paths_df['xy'].apply(lambda x: eval(x))
-        #print(self.bees_paths_df.head())
+        self.bees_paths_df = read_coordinates_file(csv_file_path)
 
     def overlay_frame(self, frame):
 
