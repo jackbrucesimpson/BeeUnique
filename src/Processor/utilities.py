@@ -103,8 +103,8 @@ def read_coordinates_file(coord_file_path):
     else:
         print('Unknown coordinate file type')
         sys.exit(0)
-
+        
     # turn coordinate column into x,y dictionary
-    df['xy'] = df['xy'].apply(lambda x: eval(x))
+    df['xy'] = df['xy'].apply(lambda x: eval(str(x)))
 
     return df

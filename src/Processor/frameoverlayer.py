@@ -3,11 +3,11 @@ import pandas as pd
 import cv2
 
 class FrameOverlayer:
-    def __init__(self, video_path, csv_file_path):
+    def __init__(self, video_path, json_file_path):
         self.frame_counter = 0
         self.offset = -20
         video_filename = get_video_filename(video_path)
-        self.bees_paths_df = read_coordinates_file(csv_file_path)
+        self.bees_paths_df = read_coordinates_file(json_file_path)
 
     def overlay_frame(self, frame):
 

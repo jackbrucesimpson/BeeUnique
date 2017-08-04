@@ -11,8 +11,7 @@ from Processor import get_video_datetime, create_dir_check_exists
 def main():
     datetime_images_dict = {}
 
-    experiment_directory = '/home/jack/Data/Caffeine_Unique_Tags'
-    image_directory_path = os.path.join(experiment_directory, 'background') + '/'
+    image_directory_path = sys.argv[1]
 
     for bg_image_file in glob.glob(image_directory_path + '*.png'):
         video_dt = get_video_datetime(bg_image_file)

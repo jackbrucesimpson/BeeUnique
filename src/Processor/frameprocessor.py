@@ -21,18 +21,16 @@ class FrameProcessor:
         self.experiment_directory = create_dir_check_exists(output_directory, experiment_name)
         self.experiment_name = experiment_name
         self.pytrack = PyTrack()
-        self.train_up_to_frame_num = 2400
+        self.train_up_to_frame_num = 2000
         self.unknown_class = 3
 
-        csv_dir = create_dir_check_exists(self.experiment_directory, 'csv')
         json_dir = create_dir_check_exists(self.experiment_directory, 'json')
+        self.json_filename = os.path.join(json_dir, self.video_filename + '.json')
         bg_image_dir = create_dir_check_exists(self.experiment_directory, 'background')
 
-        self.json_filename = os.path.join(csv_dir, self.video_filename + '.json')
-        self.csv_filename = os.path.join(json_dir, self.video_filename + '.csv')
-        self.bg_image = BGImage(bg_image_dir, video_filename)
+        self.bg_image = BGImage(bg_image_dir, self.video_filename)
 
-        if os.path.exists(self.csv_filename):
+        if os.path.exists(self.json_filename):
             print('Video already processed')
             sys.exit(0)
 
@@ -85,14 +83,14 @@ class FrameProcessor:
         predict_classes = self.model.predict_classes(tag_image_array_tf_shaped_float)
         return list(predict_classes)
 
-    def output_training_images(self, bee_id, flattened_28x28_tag_matrices):
+    def output_training_images(self, bee_id, frame_nums, flattened_28x28_tag_matrices):
         training_images_dir = create_dir_check_exists(self.experiment_directory, 'training_images')
         tag_directory = create_dir_check_exists(training_images_dir, self.video_filename)
         bees_tag_directory = create_dir_check_exists(tag_directory, str(bee_id))
-        for flattened_28x28_tag_matrix in flattened_28x28_tag_matrices:
+        for i, flattened_28x28_tag_matrix in enumerate(flattened_28x28_tag_matrices):
             if len(flattened_28x28_tag_matrix) > 0:
                 tag_matrix = np.array(flattened_28x28_tag_matrix, dtype=np.uint8).reshape(28, 28)
-                tag_filename = uuid.uuid4().hex + '.png'
+                tag_filename = str(frame_nums[i]) + '_' + uuid.uuid4().hex + '.png'
                 output_tag_image_path = os.path.join(bees_tag_directory, tag_filename)
                 cv2.imwrite(output_tag_image_path, tag_matrix)
 
@@ -103,14 +101,14 @@ class FrameProcessor:
         bees_dict = {'bee_id': [], 'xy': [], 'frame_nums': [], 'flattened_28x28_tag_matrices': []}
         bee_id = 0
         for bee in all_bees_data:
-            bees_dict['bee_id'] = bee_id
+            bees_dict['bee_id'].extend([bee_id] * len(bee['frame_nums']))
             bee_id += 1
             bees_dict['xy'].extend(bee['xy'])
             bees_dict['frame_nums'].extend(bee['frame_nums'])
             bees_dict['flattened_28x28_tag_matrices'].extend(bee['flattened_28x28_tag_matrices'])
 
             if self.is_training:
-                self.output_training_images(bee_id, bee['flattened_28x28_tag_matrices'])
+                self.output_training_images(bee_id, bee['frame_nums'], bee['flattened_28x28_tag_matrices'])
 
         bees_df = pd.DataFrame(bees_dict)
         bees_df['classifications'] = self.unknown_class
@@ -124,6 +122,4 @@ class FrameProcessor:
 
         bees_classified_df = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
 
-        bees_classified_df.to_json(self.json_filename)
-        del bees_classified_df['flattened_28x28_tag_matrices']
-        bees_classified_df.to_csv(self.csv_filename)
+        bees_classified_df.to_json(self.json_filename, orient='records')
