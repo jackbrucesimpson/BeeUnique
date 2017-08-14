@@ -1,35 +1,32 @@
 #include "structures.h"
 #include <vector>
 
-#define UNKNOWN_CLASS -1
-
 #ifndef __BEE_H__
 #define __BEE_H__
 
 class Bee {
 public:
-    Bee (PointXY initial_location, int frame_num, std::vector<int> flattened_28x28_tag_matrix);
+    Bee (float x, float y, int frame_num, int tag_matrix_index);
+    void append_point (float x, float y, int frame_num, int tag_matrix_index);
 
-    void append_point (PointXY p, int frame_num, std::vector<int> flattened_28x28_tag_matrix);
-
-    PointXY get_last_point ();
-
+    float get_last_x ();
+    float get_last_y ();
     int get_last_frame_num ();
 
-    std::vector<PointXY> get_path ();
-
+    std::vector<float> get_x_path ();
+    std::vector<float> get_y_path ();
     std::vector<int> get_frame_nums ();
 
     bool get_is_deleted ();
-
     void delete_bee ();
 
-    std::vector<std::vector<int>> get_flattened_28x28_tag_matrices ();
+    std::vector<int> get_tag_matrix_indices ();
 
 private:
-    std::vector<PointXY> path;
+    std::vector<float> x_path;
+    std::vector<float> y_path;
     std::vector<int> frame_nums;
-    std::vector<std::vector<int>> flattened_28x28_tag_matrices;
+    std::vector<int> tag_matrix_indices;
     bool is_deleted = false;
 };
 

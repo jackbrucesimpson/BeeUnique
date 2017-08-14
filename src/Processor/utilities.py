@@ -21,7 +21,7 @@ def segment_frame(counter_frame):
     closing = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel)
 
 
-    frame_data = {'frame_num': frame_num, 'xy': [], 'flat_tag_matrices': []}
+    frame_data = {'frame_num': frame_num, 'x': [], 'y': [], 'tag_matrices': []}
 
     contours, hierarchy = cv2.findContours(closing, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     for cnt in contours:
@@ -30,16 +30,15 @@ def segment_frame(counter_frame):
             continue
         if contour_area > 300 and len(cnt) > 8:
             centre, width_height, rotation = cv2.fitEllipse(cnt)
-            frame_data['xy'].append({'x': centre[0], 'y': centre[1]})
+            frame_data['x'].append(centre[0])
+            frame_data['y'].append(centre[1])
 
             if width_height[0] > 23 and width_height[1] > 23 and abs(width_height[0] - width_height[1]) < 5 and width_height[0] < 90 and centre[0] - rect_dims > 0 \
                             and centre[0] + rect_dims < frame_width and centre[1] - rect_dims > 0 and centre[1] + rect_dims < frame_height:
-
                 extracted_tag_matrix = gray_frame[int(centre[1])-rect_dims:int(centre[1])+rect_dims, int(centre[0])-rect_dims:int(centre[0])+rect_dims]
-                flattened_extracted_tag_matrix = extracted_tag_matrix.flatten().tolist()
-                frame_data['flat_tag_matrices'].append(flattened_extracted_tag_matrix)
+                frame_data['tag_matrices'].append(extracted_tag_matrix)
             else:
-                frame_data['flat_tag_matrices'].append([])
+                frame_data['tag_matrices'].append(None)
 
     return frame_data
 
@@ -103,7 +102,7 @@ def read_coordinates_file(coord_file_path):
     else:
         print('Unknown coordinate file type')
         sys.exit(0)
-        
+
     # turn coordinate column into x,y dictionary
     df['xy'] = df['xy'].apply(lambda x: eval(str(x)))
 

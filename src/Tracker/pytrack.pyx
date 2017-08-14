@@ -1,26 +1,23 @@
 from libcpp.vector cimport vector
 
 cdef extern from "structures.h":
-    struct PointXY:
-        float x
-        float y
-
-    struct OutputBeeData:
-        vector[PointXY] xy
+    struct outputbeedata:
+        vector[float] x_path
+        vector[float] y_path
         vector[int] frame_nums
-        vector[vector[int]] flattened_28x28_tag_matrices
+        vector[int] tag_matrix_indices
 
 cdef extern from "track.h":
     cdef cppclass Track:
         Track() except +
-        void track_frame (vector[PointXY], vector[vector[int]], int)
-        vector[OutputBeeData] get_all_bees_data ()
+        void track_video (vector[int], vector[vector[float]], vector[vector[float]])
+        vector[outputbeedata] get_all_bees_data ()
 
 cdef class PyTrack:
     cdef Track track
     def __cinit__(self):
-        self.track = Track()
-    def track_frame(self, contour_locations, flattened_28x28_tag_matrices, frame_num):
-        self.track.track_frame(contour_locations, flattened_28x28_tag_matrices, frame_num)
+        self.track = Track ()
+    def track_video(self, frame_nums, x_grouped_by_frame, y_grouped_by_frame):
+        self.track.track_video (frame_nums, x_grouped_by_frame, y_grouped_by_frame)
     def get_all_bees_data(self):
-        return self.track.get_all_bees_data()
+        return self.track.get_all_bees_data ()

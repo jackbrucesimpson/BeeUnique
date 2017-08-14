@@ -25,8 +25,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-iterate through tag data, see if there are any uncertain ones over a certain length
-write to directory

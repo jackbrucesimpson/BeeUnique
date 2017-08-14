@@ -2,9 +2,11 @@ import cv2
 import os
 import numpy as np
 
+from utilities import create_dir_check_exists
+
 class BGImage:
-    def __init__(self, bg_image_dir, video_filename):
-        self.bg_image_dir = bg_image_dir
+    def __init__(self, experiment_directory, video_filename):
+        self.bg_image_dir = create_dir_check_exists(experiment_directory, 'background')
         self.video_filename = video_filename
 
         self.num_frames_averaged = 0

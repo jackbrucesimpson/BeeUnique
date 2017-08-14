@@ -31,7 +31,7 @@ def main():
         frame = stream.read()
         fp.append_frame_process(frame)
 
-    if len(fp.list_frames_batch) > 0:
+    if len(fp.all_frames_data['list_frames_batch']) > 0:
         fp.parallel_process_frames()
     fp.output_data()
 

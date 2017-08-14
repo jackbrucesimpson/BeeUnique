@@ -3,15 +3,11 @@
 #ifndef __STRUCTURES_H__
 #define __STRUCTURES_H__
 
-struct PointXY {
-    float x;
-    float y;
-};
-
-struct OutputBeeData {
-    std::vector<PointXY> xy;
+struct outputbeedata {
+    std::vector<float> x_path;
+    std::vector<float> y_path;
     std::vector<int> frame_nums;
-    std::vector<std::vector<int>> flattened_28x28_tag_matrices;
+    std::vector<int> tag_matrix_indices;
 };
 
 #endif /* __STRUCTURES_H__ */
