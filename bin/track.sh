@@ -2,7 +2,7 @@
 set -u
 set -e
 
-VIDEO_DIRECTORY="/media/jack/IDs"
+VIDEO_DIRECTORY="/media/jack/ID3"
 OUTPUT_DIRECTORY="/home/jack/Data"
 EXPERIMENT_NAME="Caffeine_Unique_Tags"
 TRAINING=0 # 0:False, 1:True
