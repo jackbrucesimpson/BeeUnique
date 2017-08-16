@@ -37,7 +37,7 @@ class ProcessPaths:
         frame_nums_list = bee_df['frame_nums'].tolist()
         classifications_list = bee_df['classifications'].tolist()
 
-        bee_data = BeeData(self.video_start_datetime, classifications_list[0])
+        bee_data = BeeData(classifications_list[0])
         path_frame_num_start = frame_nums_list[0]
         path_frame_num_end = frame_nums_list[0]
         x_path = [x_list[0]]

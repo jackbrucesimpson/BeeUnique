@@ -2,6 +2,6 @@
 set -u
 set -e
 
-EXPERIMENT_DIRECTORY="/Users/jacksimpson/Data/Caffeine_Unique_Tags"
+source setup.sh
 
 python2 ../src/combine_bg.py $EXPERIMENT_DIRECTORY

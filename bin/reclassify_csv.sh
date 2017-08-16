@@ -2,7 +2,7 @@
 set -u
 set -e
 
-EXPERIMENT_DIRECTORY="/Users/jacksimpson/Data/Caffeine_Unique_Tags"
+source setup.sh
 
 CSV_FILE_ARRAY=("$EXPERIMENT_DIRECTORY/csv/*.csv")
 for CSV_FILENAME_PATH in $CSV_FILE_ARRAY; do

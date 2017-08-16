@@ -1,11 +1,11 @@
-import uuid
-
 from image_utils import increment_dict_key_value
 from constants import *
 
 class BeeData:
-    def __init__(self, video_start_datetime, classification):
-        self.video_start_datetime = video_start_datetime
+
+    bee_id = 0
+
+    def __init__(self, classification):
 
         self.start_frame_num_all_paths = []
         self.list_of_all_x_paths = []
@@ -179,7 +179,8 @@ class BeeData:
                     list_class_x_path_coords.append(class_path_x_coords[:coord_index])
                     list_class_y_path_coords.append(class_path_y_coords[:coord_index])
                     list_class_path_start_frame_nums.append(class_path_start_frame_num)
-                    bee_tag_data = {'video_start_datetime': self.video_start_datetime, 'bee_id': uuid.uuid4().hex, 'tag_class': self.classes_in_path[path_class_index], 'x_paths': list_class_x_path_coords, 'y_paths': list_class_y_path_coords, 'start_frame_nums': list_class_path_start_frame_nums}
+                    bee_tag_data = {'bee_id': self.bee_id, 'tag_class': self.classes_in_path[path_class_index], 'x_paths': list_class_x_path_coords, 'y_paths': list_class_y_path_coords, 'start_frame_nums': list_class_path_start_frame_nums}
+                    self.bee_id += 1
                     bee_tags_in_path.append(bee_tag_data)
 
                     class_path_start_frame_num += coord_index
@@ -197,7 +198,8 @@ class BeeData:
             list_class_y_path_coords.append(class_y_path_coords)
             list_class_path_start_frame_nums.append(class_path_start_frame_num)
 
-        bee_tag_data = {'video_start_datetime': self.video_start_datetime, 'bee_id': uuid.uuid4().hex, 'tag_class': self.classes_in_path[path_class_index], 'x_paths': list_class_x_path_coords, 'y_paths': list_class_y_path_coords, 'start_frame_nums': list_class_path_start_frame_nums}
+        bee_tag_data = {'bee_id': self.bee_id, 'tag_class': self.classes_in_path[path_class_index], 'x_paths': list_class_x_path_coords, 'y_paths': list_class_y_path_coords, 'start_frame_nums': list_class_path_start_frame_nums}
+        self.bee_id += 1
         bee_tags_in_path.append(bee_tag_data)
 
         return bee_tags_in_path
