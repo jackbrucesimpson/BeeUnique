@@ -119,3 +119,10 @@ def segment_frame(counter_frame):
                 frame_data['tag_matrices'].append(None)
 
     return frame_data
+
+def increment_dict_key_value(class_dict, classification, num_increment=1):
+    if classification in class_dict.keys():
+        class_dict[classification] += num_increment
+    else:
+        class_dict[classification] = num_increment
+    return class_dict

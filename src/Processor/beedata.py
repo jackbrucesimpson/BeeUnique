@@ -1,6 +1,7 @@
-from constants import *
-
 import uuid
+
+from image_utils import increment_dict_key_value
+from constants import *
 
 class BeeData:
     def __init__(self, video_start_datetime, classification):
@@ -15,13 +16,6 @@ class BeeData:
 
         self.class_counts_path = {UNKNOWN_CLASS: 0, GAP_CLASS: 0}
         self.add_classification(classification)
-
-    def increment_dict_key_value(self, class_dict, classification):
-        if classification in class_dict.keys():
-            class_dict[classification] += 1
-        else:
-            class_dict[classification] = 1
-        return class_dict
 
     def get_most_freq_class_pred(self, section_classifications):
         num_classifications = len(section_classifications)
@@ -41,7 +35,7 @@ class BeeData:
         else:
             section_count_dict = {MIXED_CLASS: 0, UNKNOWN_CLASS: 0}
             for classification in section_classifications:
-                section_count_dict = self.increment_dict_key_value(section_count_dict, classification)
+                section_count_dict = increment_dict_key_value(section_count_dict, classification)
 
             del section_count_dict[MIXED_CLASS]
             del section_count_dict[UNKNOWN_CLASS]
@@ -56,7 +50,7 @@ class BeeData:
 
     def add_classification(self, classification):
         self.num_classifications_in_group += 1
-        self.class_counts_path = self.increment_dict_key_value(self.class_counts_path, classification)
+        self.class_counts_path = increment_dict_key_value(self.class_counts_path, classification)
 
         if self.num_classifications_in_group == NUM_GROUP_CLASSIFICATIONS:
             self.identify_freq_class_path_group()

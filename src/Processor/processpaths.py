@@ -20,6 +20,17 @@ class ProcessPaths:
 
         return gap_coords
 
+    def get_class_num_frames_tracked(self, bee_tags_in_path):
+        path_class_frames_tracked_list = []
+        for bee in bee_tags_in_path:
+            tag_class = bee['tag_class']
+            num_frames_tracked = 0
+            for path_index in range(len(bee['x_paths'])):
+                num_frames_tracked += len(bee['x_paths'][path_index])
+            path_class_frames_tracked_list.append({'tag_class': tag_class, 'num_frames_tracked': num_frames_tracked})
+
+            return path_class_frames_tracked_list
+
     def process_paths(self, bee_df):
         x_list = bee_df['x'].tolist()
         y_list = bee_df['y'].tolist()

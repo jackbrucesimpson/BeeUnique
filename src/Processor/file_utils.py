@@ -35,7 +35,7 @@ def read_coordinates_file(coord_file_path):
     file_extension = coord_file_path.split('.')[-1]
     if file_extension == 'csv':
         coords_data = pd.read_csv(coord_file_path)
-        coords_data['flattened_28x28_tag_matrices'] = df['flattened_28x28_tag_matrices'].apply(lambda x: eval(x) if x is not np.nan else None)
+        coords_data['flattened_28x28_tag_matrices'] = coords_data['flattened_28x28_tag_matrices'].apply(lambda x: eval(x) if x is not np.nan else None)
     elif file_extension == 'json':
         with open(coord_file_path) as json_file:
             coords_data = json.load(json_file)

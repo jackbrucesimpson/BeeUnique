@@ -1,6 +1,5 @@
 import pandas as pd
 import cv2
-import json
 
 from file_utils import read_coordinates_file, convert_json_paths_to_df
 from constants import *

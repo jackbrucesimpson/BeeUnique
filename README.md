@@ -69,13 +69,13 @@ Will go over all the csvs that were generated and create the tag images. Images 
 `sudo apt-get install libopencv-dev python-opencv python-pip exfat-fuse`
 
 #### Python libraries
-`pip install numpy matplotlib pandas scipy sklearn cython h5py`
+`pip2 install numpy matplotlib pandas scipy sklearn cython h5py`
 
 #### Machine Learning Libraries
 
 If you want to set these libraries up to run on the GPU (optional), please follow the steps [here](https://gist.github.com/jackbrucesimpson/854b76ec1a3005af3377f7b22fda1f13) rather than running the command below.
 
-`pip install tensorflow keras`
+`pip2 install tensorflow keras`
 
 #### Building
 
