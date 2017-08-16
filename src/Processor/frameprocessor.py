@@ -1,37 +1,30 @@
 import multiprocessing
-import cv2
-import collections
-import operator
 import os
 import pandas as pd
-import numpy as np
 import sys
-from datetime import datetime
-import uuid
-import time
-from keras.models import load_model
 
-from bgimage import BGImage
-from utilities import segment_frame, get_video_filename, create_dir_check_exists
+from file_utils import get_video_filename, create_dir_check_exists
+from image_utils import segment_frame, classify_df_tags
 from pytrack import PyTrack
+from bgimage import BGImage
+
 from constants import *
 
 class FrameProcessor:
     def __init__(self, video_path, output_directory, experiment_name, is_training, num_frames_batch_process, n_processes, chunksize):
         self.is_training = is_training
-        self.video_filename = get_video_filename(video_path)
         self.experiment_directory = create_dir_check_exists(output_directory, experiment_name)
         self.train_up_to_frame_num = 2000
         self.num_frames_batch_process = num_frames_batch_process
         self.n_processes = n_processes
         self.chunksize = chunksize
-        self.t1 = time.time()
+        video_filename = get_video_filename(video_path)
 
         self.pytrack = PyTrack()
-        self.bgimage = BGImage(self.experiment_directory, self.video_filename)
+        self.bgimage = BGImage(self.experiment_directory, video_filename)
 
         csv_dir = create_dir_check_exists(self.experiment_directory, 'csv')
-        self.csv_file_path = os.path.join(csv_dir, self.video_filename + '.csv')
+        self.csv_file_path = os.path.join(csv_dir, video_filename + '.csv')
         if os.path.exists(self.csv_file_path):
             print('Video already processed')
             sys.exit(0)
@@ -52,7 +45,6 @@ class FrameProcessor:
 
             if self.is_training and self.all_frames_data['frame_counter'] > self.train_up_to_frame_num:
                 print('Finished tag training extraction of video. Number of frames processed:', self.all_frames_data['frame_counter'])
-                print(time.time() - self.t1)
                 self.output_data()
                 sys.exit(0)
 
@@ -71,18 +63,6 @@ class FrameProcessor:
             self.all_frames_data['y_grouped_by_frame'].append(frame_data['y'])
 
         self.all_frames_data['list_frames_batch'] = []
-
-    def classify_tags(self, flattened_28x28_tag_matrices):
-        this_dir, this_filename = os.path.split(__file__)
-        data_path = os.path.join(this_dir, "data", "model.h5")
-        model = load_model(data_path)
-
-        tag_image_array = np.array(list(flattened_28x28_tag_matrices))
-        tag_image_array_tf_shaped = tag_image_array.reshape(tag_image_array.shape[0], 28, 28, 1)
-        tag_image_array_tf_shaped_float = tag_image_array_tf_shaped.astype('float32')
-        tag_image_array_tf_shaped_float /= 255
-        predict_classes = model.predict_classes(tag_image_array_tf_shaped_float)
-        return list(predict_classes)
 
     def output_data (self):
         self.bgimage.output_bg_image()
@@ -106,13 +86,5 @@ class FrameProcessor:
                 bees_dict['flattened_28x28_tag_matrices'].append(tag_matrix)
 
         bees_df = pd.DataFrame(bees_dict)
-        bees_df['classifications'] = UNKNOWN_CLASS
-
-        bees_df_tags_predicted = bees_df[bees_df['flattened_28x28_tag_matrices'].notnull()]
-        bees_df_tags_not_predicted = bees_df[bees_df['flattened_28x28_tag_matrices'].isnull()]
-
-        if not self.is_training:
-            bees_df_tags_predicted['classifications'] = self.classify_tags(bees_df_tags_predicted['flattened_28x28_tag_matrices'])
-
-        bees_classified_df = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
-        bees_classified_df.to_csv(self.csv_file_path, index=False)
+        bees_classified_df_sorted = classify_df_tags(bees_df)
+        bees_classified_df_sorted.to_csv(self.csv_file_path, index=False)

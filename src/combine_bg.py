@@ -6,12 +6,12 @@ import cv2
 import glob
 from datetime import datetime
 
-from Processor import get_video_datetime, create_dir_check_exists
+from Processor.file_utils import get_video_datetime, create_dir_check_exists
 
 def main():
     datetime_images_dict = {}
-
-    image_directory_path = sys.argv[1]
+    experiment_directory = sys.argv[1]
+    image_directory_path = create_dir_check_exists(experiment_directory, 'background/')
 
     for bg_image_file in glob.glob(image_directory_path + '*.png'):
         video_dt = get_video_datetime(bg_image_file)

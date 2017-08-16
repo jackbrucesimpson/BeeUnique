@@ -3,14 +3,21 @@ import cv2
 import os
 import sys
 
-from Processor import read_coordinates_file, get_video_filename
-from Paths import ProcessPaths
+from Processor.file_utils import get_video_filename, create_dir_check_exists, read_coordinates_file,
+from Processor.image_utils import output_training_images
+
+from Processor import ProcessPaths
 
 def main():
-    json_file = sys.argv[1]
-    video_datetime = get_video_filename(json_file)
-    coord_df = read_coordinates_file(json_file)
-    coord_df_sorted = coord_df.sort_values('frame_nums', ascending=True)
+    csv_file = sys.argv[1]
+    video_datetime = get_video_filename(csv_file)
+    coord_df = read_coordinates_file(csv_file)
+
+
+
+
+
+
 
     grouped_bee_id = coord_df_sorted.groupby('bee_id')
     for group_name, group_df in grouped_bee_id:

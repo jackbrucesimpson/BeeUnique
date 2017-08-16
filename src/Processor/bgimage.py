@@ -2,7 +2,7 @@ import cv2
 import os
 import numpy as np
 
-from utilities import create_dir_check_exists
+from file_utils import create_dir_check_exists
 
 class BGImage:
     def __init__(self, experiment_directory, video_filename):

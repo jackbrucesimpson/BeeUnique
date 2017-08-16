@@ -1,4 +1,4 @@
-# modified from pyimagesearch tutorial
+# modified from pyimagesearch
 
 import sys
 import numpy as np

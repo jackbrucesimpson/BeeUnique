@@ -6,8 +6,9 @@ class BeeData:
     def __init__(self, video_start_datetime, classification):
         self.video_start_datetime = video_start_datetime
 
-        self.start_end_frame_num_all_paths = []
-        self.list_of_all_xy_paths = []
+        self.start_frame_num_all_paths = []
+        self.list_of_all_x_paths = []
+        self.list_of_all_y_paths = []
 
         self.consensus_grouped_classifications = []
         self.num_classifications_in_group = 0
@@ -167,37 +168,42 @@ class BeeData:
         bee_paths_index_starts = 0
         bee_tags_in_path = []
 
-        class_path_coords = None
-        class_path_start_end_frame_num = None
+        class_x_path_coords = None
+        class_y_path_coords = None
+        class_path_start_frame_num = None
 
-        list_class_path_coords = []
-        list_class_path_start_end_frame_nums = []
+        list_class_x_path_coords = []
+        list_class_y_path_coords = []
+        list_class_path_start_frame_nums = []
 
-        for paths_index in range(len(self.list_of_all_xy_paths)):
-            class_path_coords = self.list_of_all_xy_paths[paths_index]
-            class_path_start_end_frame_num = self.start_end_frame_num_all_paths[paths_index]
-            for xy_index in range(len(self.list_of_all_xy_paths[paths_index])):
-
+        for paths_index in range(len(self.list_of_all_x_paths)):
+            class_x_path_coords = self.list_of_all_x_paths[paths_index]
+            class_y_path_coords = self.list_of_all_y_paths[paths_index]
+            class_path_start_frame_num = self.start_frame_num_all_paths[paths_index]
+            for coord_index in range(len(self.list_of_all_x_paths[paths_index])):
                 if num_coords > self.class_path_end_index[path_class_index]:
-                    list_class_path_coords.append(class_path_coords[:xy_index])
-                    list_class_path_start_end_frame_nums.append({'start': class_path_start_end_frame_num['start'], 'end': class_path_start_end_frame_num['start']+xy_index-1})
-                    bee_tag_data = {'video_start_datetime': self.video_start_datetime, 'bee_id': uuid.uuid4().hex, 'tag_class': self.classes_in_path[path_class_index], 'xy_paths': list_class_path_coords, 'start_end_frame_nums': list_class_path_start_end_frame_nums}
+                    list_class_x_path_coords.append(class_path_x_coords[:coord_index])
+                    list_class_y_path_coords.append(class_path_y_coords[:coord_index])
+                    list_class_path_start_frame_nums.append(class_path_start_frame_num)
+                    bee_tag_data = {'video_start_datetime': self.video_start_datetime, 'bee_id': uuid.uuid4().hex, 'tag_class': self.classes_in_path[path_class_index], 'x_paths': list_class_x_path_coords, 'y_paths': list_class_y_path_coords, 'start_frame_nums': list_class_path_start_frame_nums}
                     bee_tags_in_path.append(bee_tag_data)
 
-
-                    class_path_start_end_frame_num['start'] += xy_index
-                    class_path_coords = class_path_coords[xy_index:]
-                    list_class_path_coords = []
-                    list_class_path_start_end_frame_nums = []
+                    class_path_start_frame_num += coord_index
+                    class_x_path_coords = class_x_path_coords[coord_index:]
+                    class_y_path_coords = class_y_path_coords[coord_index:]
+                    list_class_x_path_coords = []
+                    list_class_y_path_coords = []
+                    list_class_path_start_frame_nums = []
 
                     path_class_index += 1
 
                 num_coords += 1
 
-            list_class_path_coords.append(class_path_coords)
-            list_class_path_start_end_frame_nums.append(class_path_start_end_frame_num)
+            list_class_x_path_coords.append(class_x_path_coords)
+            list_class_y_path_coords.append(class_y_path_coords)
+            list_class_path_start_frame_nums.append(class_path_start_frame_num)
 
-        bee_tag_data = {'video_start_datetime': self.video_start_datetime, 'bee_id': uuid.uuid4().hex, 'tag_class': self.classes_in_path[path_class_index], 'xy_paths': list_class_path_coords, 'start_end_frame_nums': list_class_path_start_end_frame_nums}
+        bee_tag_data = {'video_start_datetime': self.video_start_datetime, 'bee_id': uuid.uuid4().hex, 'tag_class': self.classes_in_path[path_class_index], 'x_paths': list_class_x_path_coords, 'y_paths': list_class_y_path_coords, 'start_frame_nums': list_class_path_start_frame_nums}
         bee_tags_in_path.append(bee_tag_data)
 
         return bee_tags_in_path
