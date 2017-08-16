@@ -86,5 +86,10 @@ class FrameProcessor:
                 bees_dict['flattened_28x28_tag_matrices'].append(tag_matrix)
 
         bees_df = pd.DataFrame(bees_dict)
-        bees_classified_df_sorted = classify_df_tags(bees_df)
-        bees_classified_df_sorted.to_csv(self.csv_file_path, index=False)
+        if self.is_training:
+            bees_df['classifications'] = UNKNOWN_CLASS
+            bees_df_sorted = bees_classified_df.sort_values('frame_nums', ascending=True)
+        else:
+            bees_df_sorted = classify_df_tags(bees_df)
+
+        bees_df_sorted.to_csv(self.csv_file_path, index=False)

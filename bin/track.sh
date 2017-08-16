@@ -5,7 +5,7 @@ set -e
 #VIDEO_DIRECTORY="/media/jack/ID3"
 OUTPUT_DIRECTORY="/Users/jacksimpson/Data" #"/home/jack/Data"
 EXPERIMENT_NAME="Caffeine_Unique_Tags"
-TRAINING=1 # 0:False, 1:True
+TRAINING=0 # 0:False, 1:True
 
 NUM_FRAMES_THREAD_QUEUE=200
 NUM_FRAMES_BATCH_PROCESS=100

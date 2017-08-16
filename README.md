@@ -4,19 +4,63 @@ Program to track bees with unique tags.
 
 ## Running the Programs
 
-Execution scripts are located in the `bin` directory. You can modify them to point to the directory containing videos to process and where you want your data output.
+Execution scripts are located in the `bin` directory. Instructions for how to modify the variables in them for processing your own data are included below.
 
-#### Program 1: Track
-Main tracking video that processes videos. Execute by running `bash track.sh` after modifying the following variables:
-- `VIDEO_DIRECTORY` - set to the directory video files are stored in
-- `OUTPUT_DIRECTORY` - set to where you want to write your data out to
+You can execute the scripts by running the `bash` command followed by the script name. For example, if you want to run the `track.sh` script described below, you can execute it by running `bash track.sh` in the terminal.
 
-#### Program 2: Overlay
-Overlays tracking and tag pattern classifications onto video. Execute by running `bash overlay.sh` - you can close the window by pressing 'q', and you'll need to edit the following variables:
-- `FILENAME_PATH` - set to the path of the video you want to see
-- `CSV_FILE_PATH` - set to the path of the csv file that was output by the tracking program
-- `CREATE_VIDEO` - 1 (True) or 0 (False): Outputs 4K video of overlaid footage but slows down the program
-- `OUTPUT_VIDEO_FILE` - set to the path and filename of the video you wish to output
+### track.sh
+
+Tracking program that processes videos.
+
+|Variable|Description|
+|:-:|:-|
+|VIDEO_DIRECTORY|Set to the directory video files are stored in.|
+|OUTPUT_DIRECTORY|Set to the directory you want to write your data out to.|
+|EXPERIMENT_NAME|Name of your experiment: Will create a directory with the same name in your output directory.|
+|TRAINING| Can set to 1 (True) or 0 (False). If set to training mode, the program will terminate after processing 2 mins footage from each video. Does not attempt to classify tags - merely sets them to
+
+### overlay.sh
+Overlays tracking and tag pattern classifications onto a video. You can close the window that appears by pressing 'q'.
+
+|Variable|Description|
+| :-: |:-|
+|FILENAME_PATH|Set to the path of the video you want to see.|
+|COORD_FILE_PATH|Set to the path of the csv or json file that was output by the tracking program for that video.|
+|CREATE_VIDEO|1 (True) or 0 (False). Outputs a 4K video of overlaid footage but slows down the program.|
+|OUTPUT_VIDEO_FILE|Set to the path and filename of the video you wish to output.|
+
+### process_paths.sh
+
+|Variable|Description|
+| :-: |:-|
+|||
+|||
+|||
+
+### combine_bg.sh
+
+|Variable|Description|
+| :-: |:-|
+|||
+|||
+|||
+
+### reclassify_csv.sh
+
+|Variable|Description|
+| :-: |:-|
+|||
+|||
+|||
+
+### output_tags.sh
+
+|Variable|Description|
+| :-: |:-|
+|||
+|||
+|||
+
 
 ## Setup
 
@@ -41,4 +85,6 @@ If you want to set these libraries up to run on the GPU (optional), please follo
 
 #### Building
 
-Run the `build.sh` script in the `bin` directory to compile the tracking library
+Compile the tracking library in the `bin` directory.
+
+`bash build.sh`
