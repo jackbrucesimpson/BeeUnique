@@ -2,33 +2,33 @@ import numpy as np
 import cv2
 import os
 import sys
+import json
 
-from Processor.file_utils import get_video_filename, create_dir_check_exists, read_coordinates_file,
-from Processor.image_utils import output_training_images
+from Processor.file_utils import get_video_filename, create_dir_check_exists, read_coordinates_file
 
 from Processor import ProcessPaths
 
 def main():
     csv_file = sys.argv[1]
+    experiment_directory = sys.argv[2]
+
     video_datetime = get_video_filename(csv_file)
-    coord_df = read_coordinates_file(csv_file)
+    json_directory = create_dir_check_exists(experiment_directory, 'json')
+    json_file_path = os.path.join(json_directory, video_datetime + '.json')
 
+    bees_df, file_extension = read_coordinates_file(csv_file)
 
-
-
-
-
-
-    grouped_bee_id = coord_df_sorted.groupby('bee_id')
-    for group_name, group_df in grouped_bee_id:
-        print(group_name)
+    all_bees_identified_by_tag = []
+    grouped_bee_id = bees_df.groupby('bee_id')
+    for bee_id, df_bee_id in grouped_bee_id:
         pp = ProcessPaths(video_datetime)
-        bd = pp.process_paths(group_df)
-        for b in bd:
-            del b['xy_paths']
-            print(b)
+        bees_identified_by_tag = pp.process_paths(df_bee_id)
+        for bee in bees_identified_by_tag:
+            all_bees_identified_by_tag.append(bee) ## do qc here
 
-        break
+    with open(json_file_path, 'w') as json_output:
+        json.dump(all_bees_identified_by_tag, json_output)
+
 
 if __name__ == "__main__":
     main()
