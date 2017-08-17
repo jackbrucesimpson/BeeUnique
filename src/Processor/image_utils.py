@@ -35,7 +35,7 @@ def classify_df_tags(bees_df):
 
     return bees_classified_df_sorted
 
-def output_training_images(bee_id, frame_nums, flattened_28x28_tag_matrices, csv_image_output_directory):
+def output_training_images(bee_id, frame_nums, flattened_28x28_tag_matrices, csv_image_output_directory, reduce_images):
     bees_tag_directory = create_dir_check_exists(csv_image_output_directory, str(bee_id))
     tag_images = []
     tag_filenames = []
@@ -44,14 +44,16 @@ def output_training_images(bee_id, frame_nums, flattened_28x28_tag_matrices, csv
             tag_matrix = np.array(flattened_28x28_tag_matrices[i], dtype=np.uint8).reshape(28, 28)
             tag_filename = str(frame_nums[i]) + '_' + uuid.uuid4().hex + '.png'
             output_tag_image_path = os.path.join(bees_tag_directory, tag_filename)
-
             tag_images.append(tag_matrix)
             tag_filenames.append(output_tag_image_path)
 
-    unique_image_indices = identify_unique_images(tag_images)
-
-    for unique_index in unique_image_indices:
-        cv2.imwrite(tag_filenames[unique_index], tag_images[unique_index])
+    if reduce_images:
+        unique_image_indices = identify_unique_images(tag_images)
+        for unique_index in unique_image_indices:
+            cv2.imwrite(tag_filenames[unique_index], tag_images[unique_index])
+    else:
+        for i in range(len(tag_images)):
+            cv2.imwrite(tag_filenames[i], tag_images[i])
 
 
 def identify_unique_images(tag_images):

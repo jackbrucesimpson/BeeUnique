@@ -176,8 +176,8 @@ class BeeData:
             class_path_start_frame_num = self.start_frame_num_all_paths[paths_index]
             for coord_index in range(len(self.list_of_all_x_paths[paths_index])):
                 if num_coords > self.class_path_end_index[path_class_index]:
-                    list_class_x_path_coords.append(class_path_x_coords[:coord_index])
-                    list_class_y_path_coords.append(class_path_y_coords[:coord_index])
+                    list_class_x_path_coords.append(class_x_path_coords[:coord_index])
+                    list_class_y_path_coords.append(class_y_path_coords[:coord_index])
                     list_class_path_start_frame_nums.append(class_path_start_frame_num)
                     bee_tag_data = {'bee_id': self.bee_id, 'tag_class': self.classes_in_path[path_class_index], 'x_paths': list_class_x_path_coords, 'y_paths': list_class_y_path_coords, 'start_frame_nums': list_class_path_start_frame_nums}
                     self.bee_id += 1

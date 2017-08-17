@@ -46,7 +46,7 @@ Will go over all the csvs that were generated and create the tag images. Images 
 
 |Variable|Description|
 |:-:|:-|
-|||
+|REDUCE_IMAGES||
 
 ## Setup
 
