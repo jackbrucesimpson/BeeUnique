@@ -46,7 +46,7 @@ Will go over all the csvs that were generated and create the tag images. Images 
 
 |Variable|Description|
 |:-:|:-|
-|EXPERIMENT_DIRECTORY|Directory the experiment data is output to: should be the output directory + experiment name path.|
+|||
 
 ## Setup
 
