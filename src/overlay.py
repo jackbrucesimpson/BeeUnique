@@ -9,10 +9,6 @@ from Processor import FrameOverlayer
 from Processor.file_utils import get_video_filename
 
 def main():
-    if len(sys.argv) != 6:
-        print("Incorrect arguments")
-        sys.exit(1)
-
     video_path = sys.argv[1]
     experiment_directory = sys.argv[2]
     is_raw_coords_file = bool(int(sys.argv[3]))
