@@ -1,15 +1,15 @@
 import sys
 
-from Processor.file_utils import get_video_filename, create_dir_check_exists, read_coordinates_file
+from Processor.file_utils import get_video_filename, create_dir_check_exists
 from Processor.image_utils import output_training_images
 
 def main():
-    csv_file = sys.argv[1]
+    json_file = sys.argv[1]
     experiment_dir_path = sys.argv[2]
     reduce_images = bool(int(sys.argv[3]))
 
-    video_datetime = get_video_filename(csv_file)
-    bees_df, file_extension = read_coordinates_file(csv_file)
+    video_datetime = get_video_filename(json_file)
+    bees_df = pd.read_json(json_file)
 
     image_output_directory = create_dir_check_exists(experiment_dir_path, 'training_images')
     csv_image_output_directory = create_dir_check_exists(image_output_directory, video_datetime)

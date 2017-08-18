@@ -4,8 +4,8 @@ from constants import *
 
 class ProcessPaths:
 
-    def __init__(self, video_start_datetime):
-        self.video_start_datetime = video_start_datetime
+    def __init__(self):
+        pass
 
     def gen_gap_coords(self, x1, y1, x2, y2, difference_prev_frame):
         x_diff_per_frame = (x2 - x1) / float(difference_prev_frame)

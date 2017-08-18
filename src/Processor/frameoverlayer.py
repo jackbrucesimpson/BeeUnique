@@ -1,20 +1,30 @@
+import os
+
 import pandas as pd
 import cv2
 
-from file_utils import read_coordinates_file, convert_json_paths_to_df
+from file_utils import convert_json_paths_to_df, read_json
 from constants import *
 
 class FrameOverlayer:
-    def __init__(self, video_path, coord_file_path):
+    def __init__(self, video_filename, experiment_directory, is_raw_coords_file):
         self.frame_counter = 0
         self.offset = -20
 
-        self.bees_paths, file_extension = read_coordinates_file(coord_file_path)
-        if file_extension == 'json':
-            self.bees_paths = convert_json_paths_to_df(self.bees_paths)
+        coords_dir = None
+        if is_raw_coords_file:
+            coords_dir = os.path.join(experiment_directory, 'raw')
+            coord_file_path = os.path.join(coords_dir, video_filename + '.json')
+            self.bees_df = pd.read_json(coord_file_path)
+        else:
+            # is processed coords file
+            coords_dir = os.path.join(experiment_directory, 'processed')
+            coord_file_path = os.path.join(coords_dir, video_filename + '.json')
+            json_paths_data = read_json(coord_file_path)
+            self.bees_df = convert_json_paths_to_df(json_paths_data)
 
     def overlay_frame(self, frame):
-        frame_df = self.bees_paths[self.bees_paths['frame_nums']==self.frame_counter]
+        frame_df = self.bees_df[self.bees_df['frame_nums']==self.frame_counter]
         frame_num_text = 'Frame: ' + str(self.frame_counter)
         cv2.putText(frame, frame_num_text, (40, 40), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)
         for row in frame_df.itertuples():

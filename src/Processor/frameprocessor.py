@@ -23,9 +23,9 @@ class FrameProcessor:
         self.pytrack = PyTrack()
         self.bgimage = BGImage(self.experiment_directory, video_filename)
 
-        csv_dir = create_dir_check_exists(self.experiment_directory, 'csv')
-        self.csv_file_path = os.path.join(csv_dir, video_filename + '.csv')
-        if os.path.exists(self.csv_file_path):
+        json_dir = create_dir_check_exists(self.experiment_directory, 'raw')
+        self.json_file_path = os.path.join(json_dir, video_filename + '.json')
+        if os.path.exists(self.json_file_path):
             print('Video already processed')
             sys.exit(0)
 
@@ -92,4 +92,6 @@ class FrameProcessor:
         else:
             bees_df_sorted = classify_df_tags(bees_df)
 
-        bees_df_sorted.to_csv(self.csv_file_path, index=False)
+        bees_df_sorted['x'] = bees_df_sorted['x'].astype(int)
+        bees_df_sorted['y'] = bees_df_sorted['y'].astype(int)
+        bees_df_sorted.to_json(self.json_file_path, orient='records')

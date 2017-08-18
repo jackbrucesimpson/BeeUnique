@@ -14,18 +14,20 @@ def main():
         sys.exit(1)
 
     video_path = sys.argv[1]
-    coord_file_path = sys.argv[2]
-    create_video = bool(int(sys.argv[3]))
-    output_video_file = sys.argv[4]
-    num_frames_thread_queue = int(sys.argv[5])
+    experiment_directory = sys.argv[2]
+    is_raw_coords_file = bool(int(sys.argv[3]))
+    create_video = bool(int(sys.argv[4]))
+    output_video_file = sys.argv[5]
+    num_frames_thread_queue = int(sys.argv[6])
+
+    video_filename = get_video_filename(video_path)
 
     if create_video:
-        video_filename = get_video_filename(video_path)
         fourcc = cv2.cv.CV_FOURCC('X','V','I','D')#cv2.cv.CV_FOURCC(*'mp4v')
         out = cv2.VideoWriter(output_video_file, fourcc, fps=20.0, frameSize=(3840, 2160), isColor=True)
 
     stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
-    fo = FrameOverlayer(video_path=video_path, coord_file_path = coord_file_path)
+    fo = FrameOverlayer(video_filename, experiment_directory, is_raw_coords_file)
 
     while stream.processing_frames():
         frame = stream.read()
