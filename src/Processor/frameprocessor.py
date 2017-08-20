@@ -25,7 +25,6 @@ class FrameProcessor:
 
         json_dir = create_dir_check_exists(self.experiment_directory, 'raw')
         self.json_file_path = os.path.join(json_dir, video_filename + '.json')
-        print(self.json_file_path)
         if os.path.exists(self.json_file_path):
             print('Video already processed')
             sys.exit(0)
@@ -87,11 +86,11 @@ class FrameProcessor:
                 bees_dict['flattened_28x28_tag_matrices'].append(tag_matrix)
 
         bees_df = pd.DataFrame(bees_dict)
+        bees_df['classifications'] = UNKNOWN_CLASS
+        bees_df['x'] = bees_df['x'].astype(int)
+        bees_df['y'] = bees_df['y'].astype(int)
 
         if not self.is_training:
             bees_df = classify_df_tags(bees_df)
-        else:
-            bees_df['classifications'] = UNKNOWN_CLASS
-            bees_df = bees_df.sort_values('frame_nums', ascending=True)
 
         bees_df.to_json(self.json_file_path, orient='records')
