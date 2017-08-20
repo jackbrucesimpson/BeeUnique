@@ -1,5 +1,7 @@
 import sys
 
+import pandas as pd
+
 from Processor.file_utils import get_video_filename, create_dir_check_exists
 from Processor.image_utils import output_training_images
 

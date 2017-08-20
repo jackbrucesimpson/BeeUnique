@@ -86,12 +86,12 @@ class FrameProcessor:
                 bees_dict['flattened_28x28_tag_matrices'].append(tag_matrix)
 
         bees_df = pd.DataFrame(bees_dict)
-        if self.is_training:
-            bees_df['classifications'] = UNKNOWN_CLASS
-            bees_df_sorted = bees_classified_df.sort_values('frame_nums', ascending=True)
-        else:
-            bees_df_sorted = classify_df_tags(bees_df)
 
-        bees_df_sorted['x'] = bees_df_sorted['x'].astype(int)
-        bees_df_sorted['y'] = bees_df_sorted['y'].astype(int)
+        if not self.is_training:
+            bees_df = classify_df_tags(bees_df)
+        else:
+            bees_df['classifications'] = UNKNOWN_CLASS
+
+        
+
         bees_df_sorted.to_json(self.json_file_path, orient='records')

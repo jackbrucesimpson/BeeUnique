@@ -23,15 +23,19 @@ def classify_tags(flattened_28x28_tag_matrices):
     return list(predict_classes)
 
 def classify_df_tags(bees_df):
-    bees_df['classifications'] = UNKNOWN_CLASS
+    if 'classifications' in bees_df.columns:
+        del bees_df['classifications']
 
     bees_df_tags_predicted = bees_df[bees_df['flattened_28x28_tag_matrices'].notnull()]
     bees_df_tags_not_predicted = bees_df[bees_df['flattened_28x28_tag_matrices'].isnull()]
 
     bees_df_tags_predicted['classifications'] = classify_tags(bees_df_tags_predicted['flattened_28x28_tag_matrices'])
+    bees_df_tags_not_predicted['classifications'] = UNKNOWN_CLASS
 
     bees_classified_df = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
     bees_classified_df_sorted = bees_classified_df.sort_values('frame_nums', ascending=True)
+    bees_classified_df_sorted['x'] = bees_df_sorted['x'].astype(int)
+    bees_classified_df_sorted['y'] = bees_df_sorted['y'].astype(int)
 
     return bees_classified_df_sorted
 
