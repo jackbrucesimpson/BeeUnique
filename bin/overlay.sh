@@ -6,7 +6,7 @@ set -e
 source setup.sh
 
 #/Volumes/JSIMPSON/2017-04-13_16-00-46.mp4
-VIDEO_FILE_PATH="/Volumes/JSIMPSON/2017-02-15_06-32-03.mp4"
+VIDEO_FILE_PATH="/media/jack/ID3/"
 RAW=1
 CREATE_VIDEO=0
 OUTPUT_VIDEO_FILE="/home/jack/Data/Caffeine_Unique_Tags/test.avi"

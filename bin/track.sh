@@ -4,7 +4,7 @@ set -e
 
 source setup.sh
 
-VIDEO_DIRECTORY="/Users/jacksimpson/Data/videos"
+VIDEO_DIRECTORY="/media/jack/ID3"
 TRAINING=0
 NUM_FRAMES_BATCH_PROCESS=100
 N_PROCESSES=8

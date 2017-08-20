@@ -2,7 +2,7 @@
 set -u
 set -e
 
-OUTPUT_DIRECTORY="/Users/jacksimpson/Data"
+OUTPUT_DIRECTORY="/home/jack/Data"
 EXPERIMENT_NAME="Caffeine_Unique_Tags"
 
 EXPERIMENT_DIRECTORY="$OUTPUT_DIRECTORY/$EXPERIMENT_NAME"

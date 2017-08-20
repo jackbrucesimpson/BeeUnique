@@ -34,8 +34,8 @@ def classify_df_tags(bees_df):
 
     bees_classified_df = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
     bees_classified_df_sorted = bees_classified_df.sort_values('frame_nums', ascending=True)
-    bees_classified_df_sorted['x'] = bees_df_sorted['x'].astype(int)
-    bees_classified_df_sorted['y'] = bees_df_sorted['y'].astype(int)
+    bees_classified_df_sorted['x'] = bees_classified_df_sorted['x'].astype(int)
+    bees_classified_df_sorted['y'] = bees_classified_df_sorted['y'].astype(int)
 
     return bees_classified_df_sorted
 

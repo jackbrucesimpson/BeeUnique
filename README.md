@@ -58,7 +58,7 @@ Will go over all the csvs that were generated and create the tag images. Images 
 ### Ubuntu Installation
 
 #### System packages
-`sudo apt-get install libopencv-dev python-opencv python-pip exfat-fuse`
+`sudo apt-get install libopencv-dev python-opencv python-pip exfat-fuse git`
 
 #### Python libraries
 `pip2 install numpy matplotlib pandas scipy sklearn cython h5py`
