@@ -92,5 +92,6 @@ class FrameProcessor:
             bees_df = classify_df_tags(bees_df)
         else:
             bees_df['classifications'] = UNKNOWN_CLASS
+            bees_df = bees_df.sort_values('frame_nums', ascending=True)
 
         bees_df.to_json(self.json_file_path, orient='records')
