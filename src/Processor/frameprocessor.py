@@ -93,6 +93,4 @@ class FrameProcessor:
         else:
             bees_df['classifications'] = UNKNOWN_CLASS
 
-
-
-        bees_df_sorted.to_json(self.json_file_path, orient='records')
+        bees_df.to_json(self.json_file_path, orient='records')
