@@ -33,8 +33,20 @@ def classify_df_tags(bees_df):
 
     return bees_classified_df_sorted
 
-def output_training_images(bee_id, frame_nums, flattened_28x28_tag_matrices, csv_image_output_directory, reduce_images):
-    bees_tag_directory = create_dir_check_exists(csv_image_output_directory, str(bee_id))
+def get_json_file_output_tag_images(json_file, experiment_dir_path, video_datetime, reduce_images, bee_ids_to_output_images=None):
+    bees_df = pd.read_json(json_file)
+    image_output_directory = create_dir_check_exists(experiment_dir_path, 'training_images')
+    file_image_output_directory = create_dir_check_exists(image_output_directory, video_datetime)
+
+    grouped_bee_id = bees_df.groupby('bee_id')
+    for bee_id, df_bee_id in grouped_bee_id:
+        if bee_ids_to_output_images is not None and bee_id not in bee_ids_to_output_images:
+            continue
+        output_training_images(bee_id, list(df_bee_id['frame_nums']), list(df_bee_id['flattened_28x28_tag_matrices']), \
+                                file_image_output_directory, reduce_images)
+
+def output_training_images(bee_id, frame_nums, flattened_28x28_tag_matrices, file_image_output_directory, reduce_images):
+    bees_tag_directory = create_dir_check_exists(file_image_output_directory, str(bee_id))
     tag_images = []
     tag_filenames = []
     for i in range(len(flattened_28x28_tag_matrices)):

@@ -11,7 +11,6 @@ class FrameOverlayer:
         self.frame_counter = 0
         self.offset = -20
 
-        coords_dir = None
         if is_raw_coords_file:
             coords_dir = os.path.join(experiment_directory, 'raw')
             coord_file_path = os.path.join(coords_dir, video_filename + '.json')
