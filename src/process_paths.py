@@ -49,7 +49,7 @@ def main():
 
     #if len(bee_ids_with_long_unknowns) > 1:
         #
-
+        #{'video_datetime': [], 'bee_id': []}
 
     print(class_num_frames_tracked_dict)
     print(bee_ids_with_long_unknowns)

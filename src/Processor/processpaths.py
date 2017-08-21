@@ -55,7 +55,7 @@ class ProcessPaths:
             elif difference_prev_frame < MAX_FRAME_GAP_BETWEEN_PATHS:
                 path_frame_num_end = frame_nums_list[i]
                 generated_coord_gaps = self.gen_gap_coords(x_list[i], y_list[i], x_list[i-1], y_list[i-1], difference_prev_frame)
-                fill_path_classifications_gap = [GAP_CLASS] * len(generated_coord_gaps)
+                fill_path_classifications_gap = [GAP_CLASS] * len(generated_coord_gaps['x'])
                 fill_path_classifications_gap[-1] = classifications_list[i]
                 x_path.extend(generated_coord_gaps['x'])
                 y_path.extend(generated_coord_gaps['y'])
