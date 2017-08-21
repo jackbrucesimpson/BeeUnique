@@ -9,7 +9,7 @@ from Processor import FrameProcessor
 
 def main():
     start_time = time.time()
-    if len(sys.argv) != 9:
+    if len(sys.argv) != 10:
         print("Need input video, output directory, experiment name, and training arguments")
         sys.exit(1)
 
@@ -17,15 +17,16 @@ def main():
     output_directory = sys.argv[2]
     experiment_name = sys.argv[3]
     is_training = bool(int(sys.argv[4]))
-    num_frames_thread_queue = int(sys.argv[5])
-    num_frames_batch_process = int(sys.argv[6])
-    n_processes = int(sys.argv[7])
-    chunksize = int(sys.argv[8])
+    overwrite_raw = bool(int(sys.argv[5]))
+    num_frames_thread_queue = int(sys.argv[6])
+    num_frames_batch_process = int(sys.argv[7])
+    n_processes = int(sys.argv[8])
+    chunksize = int(sys.argv[9])
 
     print('Processing video: ', video_path)
 
     stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
-    fp = FrameProcessor(video_path, output_directory, experiment_name, is_training, num_frames_batch_process, n_processes, chunksize)
+    fp = FrameProcessor(video_path, output_directory, experiment_name, is_training, overwrite_raw, num_frames_batch_process, n_processes, chunksize)
 
     while stream.processing_frames():
         frame = stream.read()

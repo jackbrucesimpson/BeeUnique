@@ -11,10 +11,15 @@ from Processor.constants import *
 def main():
     json_file = sys.argv[1]
     experiment_directory = sys.argv[2]
+    overwrite_processed = bool(int(sys.argv[3]))
 
     video_datetime = get_video_filename(json_file)
     processed_directory = create_dir_check_exists(experiment_directory, 'processed')
     json_file_path = os.path.join(processed_directory, video_datetime + '.json')
+
+    if os.path.exists(json_file_path) and not overwrite_processed:
+        print('Video already processed')
+        sys.exit(0)
 
     bees_df = pd.read_json(json_file)
 

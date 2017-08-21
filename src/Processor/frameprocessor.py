@@ -11,7 +11,7 @@ from bgimage import BGImage
 from constants import *
 
 class FrameProcessor:
-    def __init__(self, video_path, output_directory, experiment_name, is_training, num_frames_batch_process, n_processes, chunksize):
+    def __init__(self, video_path, output_directory, experiment_name, is_training, overwrite_raw, num_frames_batch_process, n_processes, chunksize):
         self.is_training = is_training
         self.experiment_directory = create_dir_check_exists(output_directory, experiment_name)
         self.train_up_to_frame_num = 2000
@@ -25,7 +25,7 @@ class FrameProcessor:
 
         json_dir = create_dir_check_exists(self.experiment_directory, 'raw')
         self.json_file_path = os.path.join(json_dir, video_filename + '.json')
-        if os.path.exists(self.json_file_path):
+        if os.path.exists(self.json_file_path) and not overwrite_raw:
             print('Video already processed')
             sys.exit(0)
 
