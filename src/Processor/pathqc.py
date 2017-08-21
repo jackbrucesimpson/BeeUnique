@@ -7,7 +7,7 @@ rcParams.update({'figure.autolayout': True})
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 
-from Processor.image_utils import increment_dict_key_value, get_json_file_output_tag_images
+from Processor.image_utils import increment_dict_key_value
 from file_utils import create_dir_check_exists
 from constants import *
 
@@ -39,11 +39,6 @@ class PathQC:
             if bee_path_class['tag_class'] == UNKNOWN_CLASS:
                 if bee_path_class['num_frames_tracked'] > NUM_UNKNOWNS_IN_PATH_THRESHOLD:
                     self.bee_ids_with_long_unknowns.append(original_path_bee_id)
-
-    def output_tag_images_unknown_paths(self, reduce_images):
-        self.bee_ids_with_long_unknowns = set(self.bee_ids_with_long_unknowns)
-        raw_json_filepath = os.path.join(self.experiment_directory, 'raw', self.video_datetime + '.json')
-        get_json_file_output_tag_images(raw_json_filepath, self.experiment_directory, self.video_datetime, reduce_images, self.bee_ids_with_long_unknowns)
 
     def gen_qc_plot(self):
         qc_dir = create_dir_check_exists(self.experiment_directory, 'qc')

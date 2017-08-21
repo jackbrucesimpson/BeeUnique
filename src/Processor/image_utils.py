@@ -33,8 +33,7 @@ def classify_df_tags(bees_df):
 
     return bees_classified_df_sorted
 
-def get_json_file_output_tag_images(json_file, experiment_dir_path, video_datetime, reduce_images, bee_ids_to_output_images=None):
-    bees_df = pd.read_json(json_file)
+def output_df_tag_images(bees_df, experiment_dir_path, video_datetime, reduce_images, bee_ids_to_output_images=None):
     image_output_directory = create_dir_check_exists(experiment_dir_path, 'training_images')
     file_image_output_directory = create_dir_check_exists(image_output_directory, video_datetime)
 

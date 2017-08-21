@@ -6,6 +6,7 @@ from Processor import PathQC
 import pandas as pd
 
 from Processor.file_utils import get_video_filename, create_dir_check_exists, write_json
+from Processor.image_utils import output_df_tag_images
 from Processor import ProcessPaths
 
 def main():
@@ -14,7 +15,6 @@ def main():
     overwrite_processed = bool(int(sys.argv[3]))
     output_unknown_tag_path_images = bool(int(sys.argv[4]))
     reduce_images = bool(int(sys.argv[5]))
-
     print('Processing ' + json_file)
 
     video_datetime = get_video_filename(json_file)
@@ -41,7 +41,7 @@ def main():
         qc.find_unknown_and_path_lens_in_bee_classes_split_from_path(bee_id, bee_paths_list_broken_up_by_class)
 
     if output_unknown_tag_path_images:
-        qc.output_tag_images_unknown_paths(reduce_images)
+        output_df_tag_images(bees_df, experiment_directory, video_datetime, reduce_images, qc.bee_ids_with_long_unknowns)
 
     qc.gen_qc_plot()
 

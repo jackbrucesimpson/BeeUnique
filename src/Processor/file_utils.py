@@ -4,13 +4,13 @@ import json
 import numpy as np
 from datetime import datetime
 
-def get_video_filename(video_path):
-    head, tail = os.path.split(video_path)
+def get_video_filename(file_path):
+    head, tail = os.path.split(file_path)
     str_date_time = os.path.splitext(tail)[0]
     return str_date_time
 
-def get_video_datetime(video_path):
-    video_filename = get_video_filename(video_path)
+def get_video_datetime(file_path):
+    video_filename = get_video_filename(file_path)
     return datetime.strptime(video_filename, "%Y-%m-%d_%H-%M-%S")
 
 def create_dir_check_exists(dir_path, new_dir):
