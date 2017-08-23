@@ -4,7 +4,7 @@ set -e
 
 source setup.sh
 
-VIDEO_DIRECTORY="/media/jack/JSIMPSON/1b/hd"
+VIDEO_DIRECTORY="/media/jack/Backup"
 TRAINING=0
 OVERWRITE_RAW=0
 

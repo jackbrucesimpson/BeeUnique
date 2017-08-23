@@ -3,11 +3,14 @@ import os
 import numpy as np
 import pandas as pd
 import cv2
+import glob
+import numpy as np
 
 import uuid
 from keras.models import load_model
 
-from file_utils import create_dir_check_exists
+from splitdatatime import SplitDataTime
+from file_utils import create_dir_check_exists, get_video_datetime
 from constants import *
 
 def classify_tags(flattened_28x28_tag_matrices):
@@ -137,3 +140,32 @@ def increment_dict_key_value(class_dict, classification, num_increment=1):
     else:
         class_dict[classification] = num_increment
     return class_dict
+
+def combine_night_day_bg(image_directory_path, averaged_img_directory, output_image_files):
+    sdt = SplitDataTime()
+    for bg_image_file in glob.glob(image_directory_path + '*.png'):
+        image = cv2.imread(bg_image_file, cv2.IMREAD_GRAYSCALE)
+        video_dt = get_video_datetime(bg_image_file)
+        sdt.add_date_time_data(video_dt, image)
+
+    night_day_data_lists = sdt.sort_data_into_time_period()
+    night_day_images = {'night': [], 'day': []}
+    for night_or_day in night_day_data_lists.keys():
+        night_or_day_count = 0
+        night_or_day_id = {'night': '_0_', 'day': '_1_'}
+        for time_group in night_day_data_lists[night_or_day]:
+            bg_image = time_group[0].astype(np.float64)
+            num_images_averaged = 1
+            for im in time_group[1:]:
+                bg_image += im.astype(np.float64)
+                num_images_averaged += 1
+            norm_img = bg_image / num_images_averaged
+            norm_img = norm_img.astype(np.uint8)
+            night_day_images[night_or_day].append(norm_img)
+            if output_image_files:
+                image_filename = str(night_or_day_count) + night_or_day_id[night_or_day] + night_or_day + '.png'
+                file_output = os.path.join(averaged_img_directory, image_filename)
+                cv2.imwrite(file_output, norm_img)
+                night_or_day_count += 1
+
+    return night_day_images
