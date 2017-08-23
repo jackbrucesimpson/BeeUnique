@@ -9,6 +9,7 @@ plt.style.use('ggplot')
 
 from Processor.image_utils import increment_dict_key_value
 from file_utils import create_dir_check_exists
+from graphics import plot_barplot
 from constants import *
 
 class PathQC:
@@ -48,13 +49,4 @@ class PathQC:
         tag_classes_present_names = [tag_class_names[tag_class] for tag_class in tag_classes_present]
         num_frames_tag_class_present = [self.class_num_frames_tracked_dict[tag_class] for tag_class in tag_classes_present]
 
-        plt.figure()
-        plt.bar(range(len(num_frames_tag_class_present)), num_frames_tag_class_present)
-        plt.xticks(range(len(tag_classes_present_names)), tag_classes_present_names, rotation=90)
-        plt.ylim(0, NUM_FRAMES_IN_VIDEO)
-        plt.xlabel("Tag Class Name")
-        plt.ylabel("Number of Frames Present")
-        plt.title('Number of Frames Tracked by Tag Class')
-        plt.savefig(qc_plot_filename)
-        plt.clf()
-        plt.close()
+        plot_barplot(num_frames_tag_class_present, tag_classes_present_names, qc_plot_filename, 'Number of Frames Tracked by Tag Class', 'Tag Class Name', 'Number of Frames Present', 0, NUM_FRAMES_IN_VIDEO)

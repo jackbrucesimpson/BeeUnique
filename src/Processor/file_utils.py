@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 import json
-import numpy as np
+import glob
 from datetime import datetime
 
 def get_video_filename(file_path):
@@ -64,3 +64,17 @@ def convert_json_paths_to_df(json_paths_data):
     path_data_df = pd.DataFrame(path_data_dict)
 
     return path_data_df
+
+def read_all_processed_paths_files(processed_paths_dir):
+    if processed_paths_dir[-1] != '/':
+        processed_paths_dir += '/'
+    json_file_list = glob.glob(processed_paths_dir + '*.json')
+
+    video_dt_paths = []
+    for json_file in json_file_list:
+        path_data = read_json(json_file)
+        video_date_time = get_video_datetime(json_file)
+        video_dt_paths.append({'date_time': video_date_time, 'paths': path_data})
+
+    sorted_video_dt_paths = sorted(video_dt_paths, key=lambda k: k['date_time'])
+    return sorted_video_dt_paths

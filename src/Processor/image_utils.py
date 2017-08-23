@@ -141,7 +141,10 @@ def increment_dict_key_value(class_dict, classification, num_increment=1):
         class_dict[classification] = num_increment
     return class_dict
 
-def combine_night_day_bg(image_directory_path, averaged_img_directory, output_image_files):
+def combine_night_day_bg(image_directory_path, averaged_img_directory=None, output_image_files=False):
+    if image_directory_path[-1] != '/':
+        image_directory_path += '/'
+
     sdt = SplitDataTime()
     for bg_image_file in glob.glob(image_directory_path + '*.png'):
         image = cv2.imread(bg_image_file, cv2.IMREAD_GRAYSCALE)
