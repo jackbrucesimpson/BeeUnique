@@ -1,5 +1,6 @@
 
 import os
+import math
 import numpy as np
 import pandas as pd
 import cv2
@@ -12,6 +13,11 @@ from keras.models import load_model
 from splitdatatime import SplitDataTime
 from file_utils import create_dir_check_exists, get_video_datetime
 from constants import *
+
+def calc_distance(x1, y1, x2, y2):
+    x_dist = (x2 - x1)
+    y_dist = (y2 - y1)
+    return math.sqrt(x_dist * x_dist + y_dist * y_dist)
 
 def classify_tags(flattened_28x28_tag_matrices):
     this_dir, this_filename = os.path.split(__file__)

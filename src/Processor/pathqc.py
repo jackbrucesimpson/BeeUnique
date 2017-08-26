@@ -1,17 +1,5 @@
 import os
 
-import matplotlib
-matplotlib.use("Agg")
-from matplotlib import rcParams
-rcParams.update({'figure.autolayout': True})
-import matplotlib.pyplot as plt
-plt.style.use('ggplot')
-
-from Processor.image_utils import increment_dict_key_value
-from file_utils import create_dir_check_exists
-from graphics import plot_barplot
-from constants import *
-
 class PathQC:
     def __init__(self, video_datetime, experiment_directory):
         self.video_datetime = video_datetime

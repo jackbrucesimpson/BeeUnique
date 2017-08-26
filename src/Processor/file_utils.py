@@ -70,11 +70,11 @@ def read_all_processed_paths_files(processed_paths_dir):
         processed_paths_dir += '/'
     json_file_list = glob.glob(processed_paths_dir + '*.json')
 
-    video_dt_paths = []
+    video_dt_bees_json = []
     for json_file in json_file_list:
-        path_data = read_json(json_file)
+        bees_json = read_json(json_file)
         video_date_time = get_video_datetime(json_file)
-        video_dt_paths.append({'date_time': video_date_time, 'paths': path_data})
+        video_dt_bees_json.append({'date_time': video_date_time, 'bees_json': bees_json})
 
-    sorted_video_dt_paths = sorted(video_dt_paths, key=lambda k: k['date_time'])
-    return sorted_video_dt_paths
+    sorted_video_dt_bees_json = sorted(video_dt_bees_json, key=lambda k: k['date_time'])
+    return sorted_video_dt_bees_json

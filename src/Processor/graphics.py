@@ -6,7 +6,11 @@ rcParams['figure.figsize'] = 20, 16
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
+from matplotlib import colors
+import numpy as np
 #plt.style.use('ggplot')
+
+import cv2
 
 def plot_barplot(list_values, list_values_names, file_name, title, xtitle, ytitle, ymin, ymax):
     plt.figure()
@@ -20,32 +24,55 @@ def plot_barplot(list_values, list_values_names, file_name, title, xtitle, ytitl
     plt.clf()
     plt.close()
 
-def plot_path_bg(bg_image, paths, file_name):
+def plot_path_bg(x_paths, y_paths, bg_image, file_name):
     plt.figure()
-    for path in paths:
-        plt.plot(path['x_path'], path['y_path'], alpha=0.2, color='r')
+    for i in range(len(x_paths)):
+        plt.plot(x_paths[i], y_paths[i], alpha=0.2, color='r')
     plt.imshow(bg_image, cmap=cm.Greys_r)
     plt.axis('off')
     plt.savefig(file_name, dpi=100)
-    plt.show()
+    plt.clf()
+    plt.close()
 
-def plot_heatmaps(heatmap, vmax, title, filename):
+def plot_heatmaps_bg_image(heatmap, bg_image, vmax, title, file_name):
+    # resize so same size as bg image
+    upscaled_heatmap = cv2.resize(heatmap, (3840, 2160))
+
     plt.figure()
-    plt.imshow(heatmap, interpolation="nearest", vmin=0, vmax=vmax)
+    plt.imshow(bg_image, cmap = cm.Greys_r)
+    #cmap = colors.ListedColormap(['white','yellow','orange','red'])
+    plt.imshow(upscaled_heatmap, vmin=0, alpha=0.3, interpolation='bilinear', cmap='jet')
+    #plt.imshow(upscaled_heatmap, vmin=0, alpha=1, interpolation='bilinear', cmap='jet')
+    plt.xlabel("Bottom of frame")
+    plt.ylabel("Left side of frame")
+    #plt.colorbar()
+    plt.title(title)
+    plt.show()
+    plt.savefig(file_name)
+    plt.clf()
+    plt.close()
+
+
+def plot_heatmaps(heatmap, vmax, title, file_name):
+    plt.figure()
+    #interpolation="nearest",
+    #plt.imshow(heatmap, vmin=0, vmax=vmax, interpolation='gaussian')
+    plt.imshow(heatmap, vmin=0, interpolation='bilinear')
     plt.xlabel("Bottom of frame")
     plt.ylabel("Left side of frame")
     plt.colorbar()
     plt.title(title)
+    plt.show()
     plt.savefig(filename)
     plt.clf()
     plt.close()
 
-def create_histogram(list_of_values, title, filename):
+def plot_histogram(list_of_values, title, file_name):
     plt.figure()
     plt.hist(list_of_values, bins=100)
     plt.xlabel("Values")
     plt.ylabel("Frequency")
     plt.title(title)
-    plt.savefig(filename)
+    plt.savefig(file_name)
     plt.clf()
     plt.close()
