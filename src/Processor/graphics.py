@@ -6,7 +6,6 @@ rcParams['figure.figsize'] = 20, 16
 
 import matplotlib.pyplot as plt
 import matplotlib.cm as cm
-from matplotlib import colors
 import numpy as np
 #plt.style.use('ggplot')
 
@@ -40,9 +39,8 @@ def plot_heatmaps_bg_image(heatmap, bg_image, vmax, title, file_name):
 
     plt.figure()
     plt.imshow(bg_image, cmap = cm.Greys_r)
-    #cmap = colors.ListedColormap(['white','yellow','orange','red'])
     plt.imshow(upscaled_heatmap, vmin=0, alpha=0.3, interpolation='bilinear', cmap='jet')
-    #plt.imshow(upscaled_heatmap, vmin=0, alpha=1, interpolation='bilinear', cmap='jet')
+    plt.axis('off')
     plt.xlabel("Bottom of frame")
     plt.ylabel("Left side of frame")
     #plt.colorbar()

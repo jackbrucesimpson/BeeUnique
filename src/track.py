@@ -25,8 +25,8 @@ def main():
 
     print('Processing video: ', video_path)
 
-    stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
     fp = FrameProcessor(video_path, output_directory, experiment_name, is_training, overwrite_raw, num_frames_batch_process, n_processes, chunksize)
+    stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
 
     while stream.processing_frames():
         frame = stream.read()

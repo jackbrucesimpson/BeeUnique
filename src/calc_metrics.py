@@ -27,10 +27,10 @@ def main():
         for i in range(len(bee[night_day])):
             metrics = bee[night_day][i]
             bg_image = pm.night_day_bg_images[night_day][i]
+            #.zfill(3)
             time_period_str = str(night_or_day_count) + night_or_day_id[night_day] + night_day
 
             file_name = os.path.join(path_bg_dir, time_period_str + '.png')
-            '/home/jack/' + str(night_or_day_count) + night_or_day_id[night_day] + night_day
             plot_path_bg(metrics['x_paths'], metrics['y_paths'], bg_image, file_name)
 
             file_name = os.path.join(distances_per_second_window_dir, time_period_str + '.png')
