@@ -2,7 +2,7 @@ import sys
 import os
 
 from Processor import PathMetrics
-from Processor.graphics import plot_path_bg, plot_histogram
+from Processor.graphics import plot_path_bg, plot_histogram, plot_line
 from Processor.file_utils import create_dir_check_exists
 from Processor.constants import *
 
@@ -13,6 +13,8 @@ def main():
     path_bg_dir = create_dir_check_exists(plots_dir, 'path_bg')
     distances_per_second_window_dir = create_dir_check_exists(plots_dir, 'distances_per_second_window')
     seconds_spent_in_perimeter_dir = create_dir_check_exists(plots_dir, 'seconds_spent_in_perimeter')
+    consecutive_seconds_motionless_dir = create_dir_check_exists(plots_dir, 'consecutive_seconds_motionless')
+    consecutive_seconds_motionless_path_dir = create_dir_check_exists(plots_dir, 'consecutive_seconds_motionless_path')
 
     heatmaps_dir = create_dir_check_exists(plots_dir, 'heatmaps')
     pm = PathMetrics(experiment_directory)
@@ -22,6 +24,7 @@ def main():
 
     bee = tag_class_night_day_metrics[QUEEN_CLASS]
     for night_day in bee.keys():
+        print(night_day)
         night_or_day_count = 0
         night_or_day_id = {'night': '_0_', 'day': '_1_'}
         for i in range(len(bee[night_day])):
@@ -38,6 +41,25 @@ def main():
 
             file_name = os.path.join(seconds_spent_in_perimeter_dir, time_period_str + '.png')
             plot_histogram(metrics['seconds_spent_in_perimeter'], 'Seconds spent in perimeter', file_name)
+
+            file_name = os.path.join(consecutive_seconds_motionless_dir, time_period_str + '.png')
+            plot_histogram(metrics['consecutive_seconds_motionless'], 'Consecutive seconds motionless', file_name)
+
+            file_name = os.path.join(consecutive_seconds_motionless_path_dir, time_period_str + '.png')
+            plot_line(range(len(metrics['consecutive_seconds_motionless'])), metrics['consecutive_seconds_motionless'], 'Consecutive seconds motionless', 'Seconds in paths', 'Seconds motionless', 0, 1500, file_name)
+
+            if len(metrics['consecutive_seconds_motionless']) == 0:
+                print('Blank')
+            else:
+                total_seconds = 0
+                total_seconds_motionless = 0
+                for seconds_motionless in metrics['consecutive_seconds_motionless']:
+                    total_seconds_motionless += seconds_motionless
+                    if seconds_motionless == 0:
+                        total_seconds += 1
+                    else:
+                        total_seconds += seconds_motionless
+                print float(total_seconds_motionless) / total_seconds
 
             for speed_group in metrics['cells_visited_speed_groups'].keys():
                 speed_group_heatmap_dir = create_dir_check_exists(heatmaps_dir, speed_group)

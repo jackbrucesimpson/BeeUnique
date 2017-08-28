@@ -43,9 +43,10 @@ class PathMetrics:
         tag_class_metrics_per_video = {tag_class: [] for tag_class in tag_class_names.keys()}
         for tag_class in tag_class_paths_grouped_by_video.keys():
             for video_paths in tag_class_paths_grouped_by_video[tag_class]:
-                cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless': {}}
+                cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless_short': {}, 'motionless_long': {}}
                 distances_per_second_window = []
                 seconds_spent_in_perimeter = []
+                consecutive_seconds_motionless = []
                 long_stay_perimeter_coord_data = []
                 x_paths = []
                 y_paths = []
@@ -82,16 +83,25 @@ class PathMetrics:
                             distances_per_second_window.append(window_distance)
                             current_perimeter_window_distances.append(window_distance)
 
-                            if window_distance > 5:
-                                speed_group = 'moving'
+                            if window_distance > 10:
+                                if seconds_motionless_counter == 0:
+                                    speed_group = 'moving'
+                                elif seconds_motionless_counter < 120:
+                                    speed_group = 'motionless_short'
+                                else:
+                                    speed_group = 'motionless_long'
+
+                                for yx in current_window_yx_cell_coords:
+                                    cells_visited_speed_groups[speed_group] = increment_dict_key_value(cells_visited_speed_groups[speed_group], yx)
+                                    cells_visited_speed_groups['all'] = increment_dict_key_value(cells_visited_speed_groups['all'], yx)
+
+                                consecutive_seconds_motionless.append(seconds_motionless_counter)
+                                current_window_yx_cell_coords = []
+                                seconds_motionless_counter = 0
                             else:
-                                speed_group = 'motionless'
-                            for yx in current_window_yx_cell_coords:
-                                cells_visited_speed_groups[speed_group] = increment_dict_key_value(cells_visited_speed_groups[speed_group], yx)
-                                cells_visited_speed_groups['all'] = increment_dict_key_value(cells_visited_speed_groups['all'], yx)
+                                seconds_motionless_counter += 1
 
                             frame_counter = 0
-                            current_window_yx_cell_coords = []
 
                             perimeter_counter += 1
                             perimeter_distance = calc_distance(x, y, perimeter_coord[0], perimeter_coord[1])
@@ -103,10 +113,22 @@ class PathMetrics:
                                 perimeter_counter = 0
                                 current_perimeter_yx_cell_coords = []
 
+                    if seconds_motionless_counter > 0:
+                        if seconds_motionless_counter < 120:
+                            speed_group = 'motionless_short'
+                        else:
+                            speed_group = 'motionless_long'
+                        for yx in current_window_yx_cell_coords:
+                            cells_visited_speed_groups[speed_group] = increment_dict_key_value(cells_visited_speed_groups[speed_group], yx)
+                            cells_visited_speed_groups['all'] = increment_dict_key_value(cells_visited_speed_groups['all'], yx)
+
+                        consecutive_seconds_motionless.append(seconds_motionless_counter)
+
+
                     if perimeter_counter > 30:
                         long_stay_perimeter_coord_data.append({'x': perimeter_coord[0], 'y': perimeter_coord[1], 'seconds_spent_in_perimeter': perimeter_counter, 'current_perimeter_window_distances': current_perimeter_window_distances, 'current_perimeter_yx_cell_coords': current_perimeter_yx_cell_coords})
 
-                tag_class_metrics_per_video[tag_class].append({'x_paths': x_paths, 'y_paths': y_paths, 'distances_per_second_window': distances_per_second_window, 'cells_visited_speed_groups': cells_visited_speed_groups, 'seconds_spent_in_perimeter': seconds_spent_in_perimeter})
+                tag_class_metrics_per_video[tag_class].append({'x_paths': x_paths, 'y_paths': y_paths, 'distances_per_second_window': distances_per_second_window, 'cells_visited_speed_groups': cells_visited_speed_groups, 'seconds_spent_in_perimeter': seconds_spent_in_perimeter, 'consecutive_seconds_motionless': consecutive_seconds_motionless})
         return tag_class_metrics_per_video
 
     def group_bee_data_into_nights_days(self, tag_class_metrics_per_video):
@@ -126,10 +148,11 @@ class PathMetrics:
         merged_night_day_grouped_video_metrics = {'night': [], 'day': []}
         for night_day in night_day_grouped_video_metrics.keys():
             for night_day_time_period_group in night_day_grouped_video_metrics[night_day]:
-                merged_video_metrics = {'x_paths': [], 'y_paths': [], 'distances_per_second_window': [], 'cells_visited_speed_groups': {'all': {}, 'moving': {}, 'motionless': {}}, 'seconds_spent_in_perimeter': []}
+                merged_video_metrics = {'x_paths': [], 'y_paths': [], 'distances_per_second_window': [], 'cells_visited_speed_groups': {'all': {}, 'moving': {}, 'motionless_short': {}, 'motionless_long': {}}, 'seconds_spent_in_perimeter': [], 'consecutive_seconds_motionless': []}
                 for video_metrics in night_day_time_period_group:
                     merged_video_metrics['x_paths'].extend(video_metrics['x_paths'])
                     merged_video_metrics['y_paths'].extend(video_metrics['y_paths'])
+                    merged_video_metrics['consecutive_seconds_motionless'].extend(video_metrics['consecutive_seconds_motionless'])
                     merged_video_metrics['seconds_spent_in_perimeter'].extend(video_metrics['seconds_spent_in_perimeter'])
                     merged_video_metrics['distances_per_second_window'].extend(video_metrics['distances_per_second_window'])
                     for speed_group in video_metrics['cells_visited_speed_groups'].keys():

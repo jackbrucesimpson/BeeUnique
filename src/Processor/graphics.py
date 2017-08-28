@@ -19,7 +19,7 @@ def plot_barplot(list_values, list_values_names, file_name, title, xtitle, ytitl
     plt.xlabel(xtitle)
     plt.ylabel(ytitle)
     plt.title(title)
-    plt.savefig(file_name)
+    plt.savefig(file_name, dpi=100)
     plt.clf()
     plt.close()
 
@@ -29,6 +29,17 @@ def plot_path_bg(x_paths, y_paths, bg_image, file_name):
         plt.plot(x_paths[i], y_paths[i], alpha=0.2, color='r')
     plt.imshow(bg_image, cmap=cm.Greys_r)
     plt.axis('off')
+    plt.savefig(file_name, dpi=100)
+    plt.clf()
+    plt.close()
+
+def plot_line(x_values, y_values, title, xtitle, ytitle, ymin, ymax, file_name):
+    plt.figure()
+    plt.plot(x_values, y_values, alpha=1, color='r')
+    plt.ylim(ymin, ymax)
+    plt.xlabel(xtitle)
+    plt.ylabel(ytitle)
+    plt.title(title)
     plt.savefig(file_name, dpi=100)
     plt.clf()
     plt.close()
