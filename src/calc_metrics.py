@@ -21,7 +21,7 @@ def main():
     pm.generate_night_day_bgs()
     tag_class_night_day_metrics = pm.group_bee_data_into_nights_days(pm.tag_class_metrics_per_video)
 
-
+    
     bee = tag_class_night_day_metrics[QUEEN_CLASS]
     for night_day in bee.keys():
         print(night_day)

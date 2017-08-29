@@ -42,7 +42,9 @@ class PathMetrics:
     def calc_video_path_metrics(self, tag_class_paths_grouped_by_video):
         tag_class_metrics_per_video = {tag_class: [] for tag_class in tag_class_names.keys()}
         for tag_class in tag_class_paths_grouped_by_video.keys():
+            c = -1
             for video_paths in tag_class_paths_grouped_by_video[tag_class]:
+                c+= 1
                 cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless_short': {}, 'motionless_long': {}}
                 distances_per_second_window = []
                 seconds_spent_in_perimeter = []
@@ -90,6 +92,8 @@ class PathMetrics:
                                     speed_group = 'motionless_short'
                                 else:
                                     speed_group = 'motionless_long'
+                                    if seconds_motionless_counter > 900:
+                                        print(seconds_motionless_counter, self.video_date_time_list[c])
 
                                 for yx in current_window_yx_cell_coords:
                                     cells_visited_speed_groups[speed_group] = increment_dict_key_value(cells_visited_speed_groups[speed_group], yx)
@@ -118,6 +122,8 @@ class PathMetrics:
                             speed_group = 'motionless_short'
                         else:
                             speed_group = 'motionless_long'
+                            if seconds_motionless_counter > 900:
+                                print(seconds_motionless_counter, self.video_date_time_list[c])
                         for yx in current_window_yx_cell_coords:
                             cells_visited_speed_groups[speed_group] = increment_dict_key_value(cells_visited_speed_groups[speed_group], yx)
                             cells_visited_speed_groups['all'] = increment_dict_key_value(cells_visited_speed_groups['all'], yx)
