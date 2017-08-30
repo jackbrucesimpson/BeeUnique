@@ -1,14 +1,14 @@
 import os
+
 import networkx as nx
 from scipy import ndimage
 import numpy as np
 
-from file_utils import read_all_processed_paths_files
-from image_utils import combine_night_day_bg, calc_distance, calc_distance, increment_dict_key_value
-from splitdatatime import SplitDataTime
-from graphics import plot_heatmaps, plot_heatmaps_bg_image
-
-from constants import *
+from Processor.Utils.fileutils import read_all_processed_paths_files
+from Processor.Utils.imageutils import combine_night_day_bg, calc_distance, calc_distance, increment_dict_key_value
+from Processor.Utils.splitdatatime import SplitDataTime
+from Processor.Utils.graphics import plot_heatmaps, plot_heatmaps_bg_image
+from Processor.Utils import constants
 
 class PathMetrics:
     def __init__(self, experiment_directory):
@@ -20,13 +20,13 @@ class PathMetrics:
         self.tag_class_metrics_per_video = self.calc_video_path_metrics(tag_class_paths_grouped_by_video)
 
     def group_all_data_by_tag_class(self, video_dt_bees_json):
-        tag_class_paths_grouped_by_video = {tag_class: [] for tag_class in tag_class_names.keys()}
+        tag_class_paths_grouped_by_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
         for dt_bee_json in video_dt_bees_json:
             self.video_date_time_list.append(dt_bee_json['date_time'])
-            tag_class_each_video = {tag_class: [] for tag_class in tag_class_names.keys()}
+            tag_class_each_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
             for bee_json in dt_bee_json['bees_json']:
                 tag_class = bee_json['tag_class']
-                if tag_class != QUEEN_CLASS:######################################################################
+                if tag_class != constants.QUEEN_CLASS:######################################################################
                     continue######################################################################################
                 for path_index in range(len(bee_json['start_frame_nums'])):
                     start_frame_num = bee_json['start_frame_nums'][path_index]
@@ -40,10 +40,10 @@ class PathMetrics:
         return tag_class_paths_grouped_by_video
 
     def calc_video_path_metrics(self, tag_class_paths_grouped_by_video):
-        tag_class_metrics_per_video = {tag_class: [] for tag_class in tag_class_names.keys()}
+        tag_class_metrics_per_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
         for tag_class in tag_class_paths_grouped_by_video.keys():
             c = -1
-            for video_paths in tag_class_paths_grouped_by_video[tag_class]:
+            for each_video_paths in tag_class_paths_grouped_by_video[tag_class]:
                 c+= 1
                 cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless_short': {}, 'motionless_long': {}}
                 distances_per_second_window = []
@@ -52,7 +52,7 @@ class PathMetrics:
                 long_stay_perimeter_coord_data = []
                 x_paths = []
                 y_paths = []
-                for path in video_paths:
+                for path in each_video_paths:
                     start_frame_num = path['start_frame_num']
                     x_path = path['x_path']
                     y_path = path['y_path']
@@ -70,7 +70,7 @@ class PathMetrics:
                     frame_counter = 0
                     for i in range(len(x_path)):
                         x, y = x_path[i], y_path[i]
-                        x_cell, y_cell = int(x / X_BINS), int(y / Y_BINS)
+                        x_cell, y_cell = int(x / constants.X_BINS), int(y / constants.Y_BINS)
                         yx_cell_coord = (y_cell, x_cell)
                         current_perimeter_yx_cell_coords.append(yx_cell_coord)
                         current_window_yx_cell_coords.append(yx_cell_coord)
@@ -80,7 +80,7 @@ class PathMetrics:
                             start_window_coord = (x, y)
                             if perimeter_coord is None:
                                 perimeter_coord = (x, y)
-                        if frame_counter % FPS == 0:
+                        if frame_counter % constants.FPS == 0:
                             window_distance = calc_distance(x, y, start_window_coord[0], start_window_coord[1])
                             distances_per_second_window.append(window_distance)
                             current_perimeter_window_distances.append(window_distance)
@@ -172,12 +172,12 @@ class PathMetrics:
         self.night_day_bg_images = combine_night_day_bg(image_directory_path)
 
     def calc_heatmaps(self, cells_visited, bg_image, file_name):
-        all_coords_heatmap = np.zeros((NUM_Y_CELLS, NUM_X_CELLS))
-        tag_class_presence_heatmap = np.zeros((NUM_Y_CELLS, NUM_X_CELLS))
+        all_coords_heatmap = np.zeros((constants.NUM_Y_CELLS, constants.NUM_X_CELLS))
+        tag_class_presence_heatmap = np.zeros((constants.NUM_Y_CELLS, constants.NUM_X_CELLS))
         for yx_coord in cells_visited.keys():
-            if yx_coord[1] == NUM_X_CELLS:
-                all_coords_heatmap[(yx_coord[0], NUM_X_CELLS - 1)] += cells_visited[yx_coord]
-                tag_class_presence_heatmap[(yx_coord[0], NUM_X_CELLS - 1)] += 1
+            if yx_coord[1] == constants.NUM_X_CELLS:
+                all_coords_heatmap[(yx_coord[0], constants.NUM_X_CELLS - 1)] += cells_visited[yx_coord]
+                tag_class_presence_heatmap[(yx_coord[0], constants.NUM_X_CELLS - 1)] += 1
             else:
                 all_coords_heatmap[yx_coord] += cells_visited[yx_coord]
                 tag_class_presence_heatmap[yx_coord] += 1

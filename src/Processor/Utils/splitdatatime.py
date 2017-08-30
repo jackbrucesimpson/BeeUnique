@@ -1,3 +1,5 @@
+import constants
+
 class SplitDataTime():
     def __init__(self):
         self.video_dt_data = []
@@ -9,7 +11,7 @@ class SplitDataTime():
         video_dt_data_sorted = sorted(self.video_dt_data, key=lambda k: k['date_time'])
 
         is_night = True
-        night_hours = [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6]
+        constants.NIGHT_HOURS = [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6]
 
         current_data_list = []
         night_data_lists = []
@@ -18,14 +20,14 @@ class SplitDataTime():
             hour = dt_data['date_time'].hour
             hour_data = dt_data['data']
             if is_night:
-                if hour in night_hours:
+                if hour in constants.NIGHT_HOURS:
                     current_data_list.append(hour_data)
                 else:
                     night_data_lists.append(current_data_list)
                     current_data_list = [hour_data]
                     is_night = False
             else:
-                if hour not in night_hours:
+                if hour not in constants.NIGHT_HOURS:
                     current_data_list.append(hour_data)
                 else:
                     day_data_lists.append(current_data_list)

@@ -3,10 +3,10 @@ import cv2
 import os
 import sys
 
-from Processor import Stream
-from Processor import FrameOverlayer
-
-from Processor.file_utils import get_video_filename
+from Processor.Video.frameprocessor import FrameProcessor
+from Processor.Video.stream import Stream
+from Processor.Video.frameoverlayer import FrameOverlayer
+from Processor.Utils.fileutils import get_video_filename
 
 def main():
     video_path = sys.argv[1]

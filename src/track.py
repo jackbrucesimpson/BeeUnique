@@ -4,8 +4,8 @@ import os
 import sys
 import time
 
-from Processor import Stream
-from Processor import FrameProcessor
+from Processor.Video.frameprocessor import FrameProcessor
+from Processor.Video.stream import Stream
 
 def main():
     start_time = time.time()

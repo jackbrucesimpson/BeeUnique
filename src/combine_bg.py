@@ -1,8 +1,8 @@
 import os
 import sys
 
-from Processor.file_utils import create_dir_check_exists
-from Processor.image_utils import combine_night_day_bg
+from Processor.Utils.fileutils import create_dir_check_exists
+from Processor.Utils.imageutils import combine_night_day_bg
 
 def main():
     datetime_images_dict = {}

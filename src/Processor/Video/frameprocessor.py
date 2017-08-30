@@ -3,12 +3,12 @@ import os
 import pandas as pd
 import sys
 
-from file_utils import get_video_filename, create_dir_check_exists
-from image_utils import segment_frame, classify_df_tags
+from Processor.Utils.fileutils import get_video_filename, create_dir_check_exists
+from Processor.Utils.imageutils import segment_frame
+from Processor.Utils.classifier import classify_df_tags
 from pytrack import PyTrack
-from bgimage import BGImage
-
-from constants import *
+from Processor.Utils.bgimage import BGImage
+from Processor.Utils import constants
 
 class FrameProcessor:
     def __init__(self, video_path, output_directory, experiment_name, is_training, overwrite_raw, num_frames_batch_process, n_processes, chunksize):
@@ -86,7 +86,7 @@ class FrameProcessor:
                 bees_dict['flattened_28x28_tag_matrices'].append(tag_matrix)
 
         bees_df = pd.DataFrame(bees_dict)
-        bees_df['classifications'] = UNKNOWN_CLASS
+        bees_df['classifications'] = constants.UNKNOWN_CLASS
         bees_df['x'] = bees_df['x'].astype(int)
         bees_df['y'] = bees_df['y'].astype(int)
 

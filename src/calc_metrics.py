@@ -1,10 +1,10 @@
 import sys
 import os
 
-from Processor import PathMetrics
-from Processor.graphics import plot_path_bg, plot_histogram, plot_line
-from Processor.file_utils import create_dir_check_exists
-from Processor.constants import *
+from Processor.PathAnalysis.pathmetrics import PathMetrics
+from Processor.Utils.graphics import plot_path_bg, plot_histogram, plot_line
+from Processor.Utils.fileutils import create_dir_check_exists
+from Processor.Utils import constants
 
 def main():
     experiment_directory = sys.argv[1]
@@ -21,8 +21,8 @@ def main():
     pm.generate_night_day_bgs()
     tag_class_night_day_metrics = pm.group_bee_data_into_nights_days(pm.tag_class_metrics_per_video)
 
-    
-    bee = tag_class_night_day_metrics[QUEEN_CLASS]
+
+    bee = tag_class_night_day_metrics[constants.QUEEN_CLASS]
     for night_day in bee.keys():
         print(night_day)
         night_or_day_count = 0

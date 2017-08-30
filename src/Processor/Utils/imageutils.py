@@ -1,46 +1,26 @@
 
 import os
 import math
-import numpy as np
-import pandas as pd
+
 import cv2
 import glob
 import numpy as np
-
 import uuid
-from keras.models import load_model
 
 from splitdatatime import SplitDataTime
-from file_utils import create_dir_check_exists, get_video_datetime
-from constants import *
+from fileutils import create_dir_check_exists, get_video_datetime
 
 def calc_distance(x1, y1, x2, y2):
     x_dist = (x2 - x1)
     y_dist = (y2 - y1)
     return math.sqrt(x_dist * x_dist + y_dist * y_dist)
 
-def classify_tags(flattened_28x28_tag_matrices):
-    this_dir, this_filename = os.path.split(__file__)
-    data_path = os.path.join(this_dir, "model.h5")
-    model = load_model(data_path)
-
-    tag_image_array = np.array(list(flattened_28x28_tag_matrices))
-    tag_image_array_tf_shaped = tag_image_array.reshape(tag_image_array.shape[0], 28, 28, 1)
-    tag_image_array_tf_shaped_float = tag_image_array_tf_shaped.astype('float32')
-    tag_image_array_tf_shaped_float /= 255
-    predict_classes = model.predict_classes(tag_image_array_tf_shaped_float)
-    return list(predict_classes)
-
-def classify_df_tags(bees_df):
-    bees_df_tags_predicted = bees_df[bees_df['flattened_28x28_tag_matrices'].notnull()]
-    bees_df_tags_not_predicted = bees_df[bees_df['flattened_28x28_tag_matrices'].isnull()]
-
-    bees_df_tags_predicted['classifications'] = classify_tags(bees_df_tags_predicted['flattened_28x28_tag_matrices'])
-
-    bees_classified_df = pd.concat([bees_df_tags_predicted, bees_df_tags_not_predicted], ignore_index=True)
-    bees_classified_df_sorted = bees_classified_df.sort_values('frame_nums', ascending=True)
-
-    return bees_classified_df_sorted
+def increment_dict_key_value(class_dict, classification, num_increment=1):
+    if classification in class_dict.keys():
+        class_dict[classification] += num_increment
+    else:
+        class_dict[classification] = num_increment
+    return class_dict
 
 def output_df_tag_images(bees_df, experiment_dir_path, video_datetime, reduce_images, bee_ids_to_output_images=None):
     image_output_directory = create_dir_check_exists(experiment_dir_path, 'training_images')
@@ -139,13 +119,6 @@ def segment_frame(counter_frame):
                 frame_data['tag_matrices'].append(None)
 
     return frame_data
-
-def increment_dict_key_value(class_dict, classification, num_increment=1):
-    if classification in class_dict.keys():
-        class_dict[classification] += num_increment
-    else:
-        class_dict[classification] = num_increment
-    return class_dict
 
 def combine_night_day_bg(image_directory_path, averaged_img_directory=None, output_image_files=False):
     if image_directory_path[-1] != '/':

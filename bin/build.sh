@@ -8,4 +8,4 @@ python2 setup.py build_ext --inplace
 rm pytrack.cpp
 rm -rf build
 
-mv pytrack.so ../Processor/pytrack.so
+mv pytrack.so ../Processor/Video/pytrack.so

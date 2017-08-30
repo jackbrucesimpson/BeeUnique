@@ -1,13 +1,12 @@
 import os
 import sys
 
-from Processor import PathQC
-
 import pandas as pd
 
-from Processor.file_utils import get_video_filename, create_dir_check_exists, write_json
-from Processor.image_utils import output_df_tag_images
-from Processor import ProcessPaths
+from Processor.PathAssembly.processpaths import ProcessPaths
+from Processor.PathAssembly.pathqc import PathQC
+from Processor.Utils.fileutils import get_video_filename, create_dir_check_exists, write_json
+from Processor.Utils.imageutils import output_df_tag_images
 
 def main():
     json_file = sys.argv[1]

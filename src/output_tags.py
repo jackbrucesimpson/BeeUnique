@@ -2,8 +2,8 @@ import sys
 
 import pandas as pd
 
-from Processor.file_utils import get_video_filename, create_dir_check_exists
-from Processor.image_utils import output_df_tag_images
+from Processor.Utils.fileutils import get_video_filename, create_dir_check_exists
+from Processor.Utils.imageutils import output_df_tag_images
 
 def main():
     json_file = sys.argv[1]

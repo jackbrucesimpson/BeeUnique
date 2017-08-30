@@ -1,5 +1,10 @@
 import os
 
+from Processor.Utils.imageutils import increment_dict_key_value
+from Processor.Utils.fileutils import create_dir_check_exists
+from Processor.Utils.graphics import plot_barplot
+from Processor.Utils import constants
+
 class PathQC:
     def __init__(self, video_datetime, experiment_directory):
         self.video_datetime = video_datetime
@@ -25,8 +30,8 @@ class PathQC:
             self.class_num_frames_tracked_dict = increment_dict_key_value(self.class_num_frames_tracked_dict, \
                                             bee_path_class['tag_class'], bee_path_class['num_frames_tracked'])
 
-            if bee_path_class['tag_class'] == UNKNOWN_CLASS:
-                if bee_path_class['num_frames_tracked'] > NUM_UNKNOWNS_IN_PATH_THRESHOLD:
+            if bee_path_class['tag_class'] == constants.UNKNOWN_CLASS:
+                if bee_path_class['num_frames_tracked'] > constants.NUM_UNKNOWNS_IN_PATH_THRESHOLD:
                     self.bee_ids_with_long_unknowns.append(original_path_bee_id)
 
     def gen_qc_plot(self):
@@ -34,7 +39,7 @@ class PathQC:
         qc_plot_filename = os.path.join(qc_dir, self.video_datetime + '.png')
 
         tag_classes_present = self.class_num_frames_tracked_dict.keys()
-        tag_classes_present_names = [tag_class_names[tag_class] for tag_class in tag_classes_present]
+        tag_classes_present_names = [constants.TAG_CLASS_NAMES[tag_class] for tag_class in tag_classes_present]
         num_frames_tag_class_present = [self.class_num_frames_tracked_dict[tag_class] for tag_class in tag_classes_present]
 
-        plot_barplot(num_frames_tag_class_present, tag_classes_present_names, qc_plot_filename, 'Number of Frames Tracked by Tag Class', 'Tag Class Name', 'Number of Frames Present', 0, NUM_FRAMES_IN_VIDEO)
+        plot_barplot(num_frames_tag_class_present, tag_classes_present_names, qc_plot_filename, 'Number of Frames Tracked by Tag Class', 'Tag Class Name', 'Number of Frames Present', 0, constants.NUM_FRAMES_IN_VIDEO)

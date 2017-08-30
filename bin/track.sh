@@ -4,7 +4,7 @@ set -e
 
 source setup.sh
 
-VIDEO_DIRECTORY="/media/jack/Backup"
+VIDEO_DIRECTORY="/media/jack/drive14"
 TRAINING=0
 OVERWRITE_RAW=0
 

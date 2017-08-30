@@ -1,3 +1,5 @@
+import cv2
+
 import matplotlib
 matplotlib.use("Agg")
 from matplotlib import rcParams
@@ -8,8 +10,6 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm
 import numpy as np
 #plt.style.use('ggplot')
-
-import cv2
 
 def plot_barplot(list_values, list_values_names, file_name, title, xtitle, ytitle, ymin, ymax):
     plt.figure()
