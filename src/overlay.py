@@ -3,7 +3,6 @@ import cv2
 import os
 import sys
 
-from Processor.Video.frameprocessor import FrameProcessor
 from Processor.Video.stream import Stream
 from Processor.Video.frameoverlayer import FrameOverlayer
 from Processor.Utils.fileutils import get_video_filename
@@ -14,7 +13,8 @@ def main():
     is_raw_coords_file = bool(int(sys.argv[3]))
     create_video = bool(int(sys.argv[4]))
     output_video_file = sys.argv[5]
-    num_frames_thread_queue = int(sys.argv[6])
+    enhance_untagged_bees = bool(int(sys.argv[6]))
+    num_frames_thread_queue = int(sys.argv[7])
 
     video_filename = get_video_filename(video_path)
 
@@ -23,7 +23,7 @@ def main():
         out = cv2.VideoWriter(output_video_file, fourcc, fps=20.0, frameSize=(3840, 2160), isColor=True)
 
     stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
-    fo = FrameOverlayer(video_filename, experiment_directory, is_raw_coords_file)
+    fo = FrameOverlayer(video_filename, experiment_directory, is_raw_coords_file, enhance_untagged_bees)
 
     while stream.processing_frames():
         frame = stream.read()

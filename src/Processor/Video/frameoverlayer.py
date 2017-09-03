@@ -7,7 +7,10 @@ from Processor.Utils.fileutils import convert_json_paths_to_df, read_json
 from Processor.Utils import constants
 
 class FrameOverlayer:
-    def __init__(self, video_filename, experiment_directory, is_raw_coords_file):
+    def __init__(self, video_filename, experiment_directory, is_raw_coords_file, enhance_untagged_bees):
+        self.enhance_untagged_bees = enhance_untagged_bees
+        self.clahe = cv2.createCLAHE(clipLimit=10.0, tileGridSize=(13,13))
+
         self.frame_counter = 0
         self.offset = -20
 
@@ -23,6 +26,12 @@ class FrameOverlayer:
             self.bees_df = convert_json_paths_to_df(json_paths_data)
 
     def overlay_frame(self, frame):
+        if self.enhance_untagged_bees:
+            gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+            smooth_frame = cv2.GaussianBlur(gray_frame, (9, 9), 0)
+            clahe_frame = self.clahe.apply(smooth_frame)
+            frame = cv2.cvtColor(clahe_frame, cv2.COLOR_GRAY2BGR)
+
         frame_df = self.bees_df[self.bees_df['frame_nums']==self.frame_counter]
         frame_num_text = 'Frame: ' + str(self.frame_counter)
         cv2.putText(frame, frame_num_text, (40, 40), cv2.FONT_HERSHEY_DUPLEX, 1, (255, 255, 255), 2)

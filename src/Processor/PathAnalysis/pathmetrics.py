@@ -16,11 +16,11 @@ class PathMetrics:
         self.video_date_time_list = []
         processed_paths_dir = os.path.join(self.experiment_directory, 'processed')
         video_dt_bees_json = read_all_processed_paths_files(processed_paths_dir)
-        tag_class_paths_grouped_by_video = self.group_all_data_by_tag_class(video_dt_bees_json)
-        self.tag_class_metrics_per_video = self.calc_video_path_metrics(tag_class_paths_grouped_by_video)
+        tag_class_metrics_grouped_by_video = self.group_all_data_by_tag_class(video_dt_bees_json)
+        self.tag_class_metrics_per_video = self.calc_video_path_metrics(tag_class_metrics_grouped_by_video)
 
     def group_all_data_by_tag_class(self, video_dt_bees_json):
-        tag_class_paths_grouped_by_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
+        tag_class_metrics_grouped_by_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
         for dt_bee_json in video_dt_bees_json:
             self.video_date_time_list.append(dt_bee_json['date_time'])
             tag_class_each_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
@@ -35,104 +35,47 @@ class PathMetrics:
                     tag_class_each_video[tag_class].append({'start_frame_num': start_frame_num, 'x_path': x_path, 'y_path': y_path})
 
             for tag_class in tag_class_each_video.keys():
-                tag_class_paths_grouped_by_video[tag_class].append(sorted(tag_class_each_video[tag_class], key=lambda k: k['start_frame_num']))
+                tag_class_metrics_grouped_by_video[tag_class].append(sorted(tag_class_each_video[tag_class], key=lambda k: k['start_frame_num']))
 
-        return tag_class_paths_grouped_by_video
+        return tag_class_metrics_grouped_by_video
 
-    def calc_video_path_metrics(self, tag_class_paths_grouped_by_video):
+
+    def group_all_data_by_tag_class(self, video_dt_bees_json):
+        tag_class_metrics_grouped_by_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
+        for dt_bee_json in video_dt_bees_json:
+            self.video_date_time_list.append(dt_bee_json['date_time'])
+            tag_class_each_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
+            for bee_json in dt_bee_json['bees_json']:
+                tag_class = bee_json['tag_class']
+                if tag_class != constants.QUEEN_CLASS:######################################################################
+                    continue######################################################################################
+                for path_index in range(len(bee_json['start_frame_nums'])):
+                    start_frame_num = bee_json['start_frame_nums'][path_index]
+                    x_path = bee_json['x_paths'][path_index]
+                    y_path = bee_json['y_paths'][path_index]
+                    tag_class_each_video[tag_class].append({'start_frame_num': start_frame_num, 'x_path': x_path, 'y_path': y_path})
+
+            for tag_class in tag_class_each_video.keys():
+                sorted_tag_class_paths_in_video = sorted(tag_class_each_video[tag_class], key=lambda k: k['start_frame_num'])
+                vm = VideoMetrics()
+                vm.add_paths_data(sorted_tag_class_paths_in_video)
+                tag_class_metrics_grouped_by_video[tag_class].append(vm)
+
+        return tag_class_metrics_grouped_by_video
+
+    def calc_video_path_metrics(self, tag_class_metrics_grouped_by_video):
         tag_class_metrics_per_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
-        for tag_class in tag_class_paths_grouped_by_video.keys():
-            c = -1
-            for each_video_paths in tag_class_paths_grouped_by_video[tag_class]:
-                c+= 1
-                cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless_short': {}, 'motionless_long': {}}
-                distances_per_second_window = []
-                seconds_spent_in_perimeter = []
-                consecutive_seconds_motionless = []
-                long_stay_perimeter_coord_data = []
-                x_paths = []
-                y_paths = []
+        for tag_class in tag_class_metrics_grouped_by_video.keys():
+            for each_video_paths in tag_class_metrics_grouped_by_video[tag_class]:
+                vm = VideoMetrics() #### check
                 for path in each_video_paths:
                     start_frame_num = path['start_frame_num']
                     x_path = path['x_path']
                     y_path = path['y_path']
-                    x_paths.append(x_path)
-                    y_paths.append(y_path)
 
-                    perimeter_coord = None
-                    perimeter_counter = 0
-                    current_perimeter_yx_cell_coords = []
-                    current_perimeter_window_distances = []
-                    seconds_motionless_counter = 0
-
-                    start_window_coord = None
-                    current_window_yx_cell_coords = []
-                    frame_counter = 0
-                    for i in range(len(x_path)):
-                        x, y = x_path[i], y_path[i]
-                        x_cell, y_cell = int(x / constants.X_BINS), int(y / constants.Y_BINS)
-                        yx_cell_coord = (y_cell, x_cell)
-                        current_perimeter_yx_cell_coords.append(yx_cell_coord)
-                        current_window_yx_cell_coords.append(yx_cell_coord)
-
-                        frame_counter += 1
-                        if frame_counter == 1:
-                            start_window_coord = (x, y)
-                            if perimeter_coord is None:
-                                perimeter_coord = (x, y)
-                        if frame_counter % constants.FPS == 0:
-                            window_distance = calc_distance(x, y, start_window_coord[0], start_window_coord[1])
-                            distances_per_second_window.append(window_distance)
-                            current_perimeter_window_distances.append(window_distance)
-
-                            if window_distance > 10:
-                                if seconds_motionless_counter == 0:
-                                    speed_group = 'moving'
-                                elif seconds_motionless_counter < 120:
-                                    speed_group = 'motionless_short'
-                                else:
-                                    speed_group = 'motionless_long'
-                                    if seconds_motionless_counter > 900:
-                                        print(seconds_motionless_counter, self.video_date_time_list[c])
-
-                                for yx in current_window_yx_cell_coords:
-                                    cells_visited_speed_groups[speed_group] = increment_dict_key_value(cells_visited_speed_groups[speed_group], yx)
-                                    cells_visited_speed_groups['all'] = increment_dict_key_value(cells_visited_speed_groups['all'], yx)
-
-                                consecutive_seconds_motionless.append(seconds_motionless_counter)
-                                current_window_yx_cell_coords = []
-                                seconds_motionless_counter = 0
-                            else:
-                                seconds_motionless_counter += 1
-
-                            frame_counter = 0
-
-                            perimeter_counter += 1
-                            perimeter_distance = calc_distance(x, y, perimeter_coord[0], perimeter_coord[1])
-                            if perimeter_distance > 200:
-                                seconds_spent_in_perimeter.append(perimeter_counter)
-                                if perimeter_counter > 30:
-                                    long_stay_perimeter_coord_data.append({'x': perimeter_coord[0], 'y': perimeter_coord[1], 'seconds_spent_in_perimeter': perimeter_counter, 'current_perimeter_window_distances': current_perimeter_window_distances, 'current_perimeter_yx_cell_coords': current_perimeter_yx_cell_coords})
-                                perimeter_coord = (x, y)
-                                perimeter_counter = 0
-                                current_perimeter_yx_cell_coords = []
-
-                    if seconds_motionless_counter > 0:
-                        if seconds_motionless_counter < 120:
-                            speed_group = 'motionless_short'
-                        else:
-                            speed_group = 'motionless_long'
-                            if seconds_motionless_counter > 900:
-                                print(seconds_motionless_counter, self.video_date_time_list[c])
-                        for yx in current_window_yx_cell_coords:
-                            cells_visited_speed_groups[speed_group] = increment_dict_key_value(cells_visited_speed_groups[speed_group], yx)
-                            cells_visited_speed_groups['all'] = increment_dict_key_value(cells_visited_speed_groups['all'], yx)
-
-                        consecutive_seconds_motionless.append(seconds_motionless_counter)
+                    vm.append_path(start_frame_num, x_path, y_path)
 
 
-                    if perimeter_counter > 30:
-                        long_stay_perimeter_coord_data.append({'x': perimeter_coord[0], 'y': perimeter_coord[1], 'seconds_spent_in_perimeter': perimeter_counter, 'current_perimeter_window_distances': current_perimeter_window_distances, 'current_perimeter_yx_cell_coords': current_perimeter_yx_cell_coords})
 
                 tag_class_metrics_per_video[tag_class].append({'x_paths': x_paths, 'y_paths': y_paths, 'distances_per_second_window': distances_per_second_window, 'cells_visited_speed_groups': cells_visited_speed_groups, 'seconds_spent_in_perimeter': seconds_spent_in_perimeter, 'consecutive_seconds_motionless': consecutive_seconds_motionless})
         return tag_class_metrics_per_video

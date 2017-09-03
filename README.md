@@ -47,6 +47,7 @@ Overlays tracking and tag pattern classifications onto a video. You can close th
 |RAW|Can set to 1 (True) or 0 (False). Determines whether you go off the raw classification data or the processed path data where a consensus tag classification has been made.|
 |CREATE_VIDEO|1 (True) or 0 (False). Outputs a 4K video of overlaid footage but slows down the program.|
 |OUTPUT_VIDEO_FILE|Set to the path and filename of the video you wish to output.|
+|ENHANCE_UNTAGGED_BEES|Try to increase the visibility of untagged bees in the video|
 
 ### reclassify_raw.sh
 Will go over all the raw classification and tracking files that were generated and reclassify all the tags in the files.
