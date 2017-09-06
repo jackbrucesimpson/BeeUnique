@@ -151,3 +151,16 @@ def combine_night_day_bg(image_directory_path, averaged_img_directory=None, outp
                 night_or_day_count += 1
 
     return night_day_images
+
+def gen_gap_coords(x1, y1, x2, y2, difference_prev_frame):
+    x_diff_per_frame = (x2 - x1) / float(difference_prev_frame)
+    y_diff_per_frame = (y2 - y1) / float(difference_prev_frame)
+
+    gap_coords = {'x': [], 'y': []}
+    for gap in range(1, difference_prev_frame + 1):
+        x_gap_coord = x2 - x_diff_per_frame * gap
+        y_gap_coord = y2 - y_diff_per_frame * gap
+        gap_coords['x'].append(x_gap_coord)
+        gap_coords['y'].append(y_gap_coord)
+
+    return gap_coords

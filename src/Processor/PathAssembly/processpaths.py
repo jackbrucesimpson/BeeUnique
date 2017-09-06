@@ -1,23 +1,11 @@
 from beedata import BeeData
+from Processor.Utils.imageutils import gen_gap_coords
 from Processor.Utils import constants
 
 class ProcessPaths:
 
     def __init__(self):
         pass
-
-    def gen_gap_coords(self, x1, y1, x2, y2, difference_prev_frame):
-        x_diff_per_frame = (x2 - x1) / float(difference_prev_frame)
-        y_diff_per_frame = (y2 - y1) / float(difference_prev_frame)
-
-        gap_coords = {'x': [], 'y': []}
-        for gap in range(1, difference_prev_frame + 1):
-            x_gap_coord = x2 - x_diff_per_frame * gap
-            y_gap_coord = y2 - y_diff_per_frame * gap
-            gap_coords['x'].append(x_gap_coord)
-            gap_coords['y'].append(y_gap_coord)
-
-        return gap_coords
 
     def process_paths(self, bee_df):
         x_list = bee_df['x'].tolist()
