@@ -36,6 +36,7 @@ class PathMetrics:
                     if len(x_path) > 0:
                         tag_class_each_video[tag_class].append({'start_frame_num': start_frame_num, 'x_path': x_path, 'y_path': y_path})
 
+            del tag_class_each_video[constants.unknown_class_num]
             for tag_class in tag_class_each_video.keys():
                 sorted_tag_class_paths_in_video = sorted(tag_class_each_video[tag_class], key=lambda k: k['start_frame_num'])
                 vm = VideoMetrics()

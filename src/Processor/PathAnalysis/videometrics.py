@@ -4,16 +4,8 @@ from Processor.Utils import constants
 class VideoMetrics:
 
     def __init__(self):
-        self.tag_class_seen = False
+        self.paths = []
 
-        self.frame_num_first_path_starts = None
-        self.frame_nums_left_video_after_last_path_ends = None
-
-        self.x_paths = []
-        self.y_paths = []
-        self.path_gap_data = []
-
-        # motionless_data:
         self.current_window = {'yx_cell_coords': [], 'coords': [], 'start_coord': {'x': None, 'y': None}, 'seconds_motionless': 0}
         self.current_perimeter = {'seconds_present': 0, 'yx_cell_coords': [], 'coords': [],
                                 'start_coord': {'x': None, 'y': None}, 'center_coord': {'x': None, 'y': None},
@@ -26,50 +18,61 @@ class VideoMetrics:
         self.cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless': {}}
 
     def merge_video_metrics(self, vm):
-        if vm.tag_class_seen == False:
-            gap_data = {'absent_in_video': True, 'num_frames_path_gap': constants.NUM_FRAMES_IN_VIDEO}
-            self.path_gap_data.append(gap_data)
+        #print('num merged paths', len(self.paths))
+
+        # entire video gap
+        if len(vm.paths) == 1:
+            if len(self.paths) == 0:
+                self.paths.append(vm.paths[0])
+            else:
+                self.paths[-1]['num_frames'] += vm.paths[0]['num_frames']
             return None
-        elif self.tag_class_seen == False or len(self.path_gap_data) == 0:
-            self.tag_class_seen = True
+        # check if no paths or only gap paths stored so far
+        # if so, delete first gap if bee was seen from the beginning
+        if len(self.paths) < 2:
+            if vm.paths[0]['num_frames'] < 1:
+                del vm.paths[0]
+            self.paths.extend(vm.paths)
         else:
-            last_path_gap = self.path_gap_data[-1]
-            if not last_path_gap['absent_in_video']:
-                last_x_path_prev_video = self.x_paths[-1]
-                last_y_path_prev_video = self.y_paths[-1]
-                fist_x_path_current_video = vm.x_paths[0]
-                fist_y_path_current_video = vm.y_paths[0]
+            # see amount of time in last gap prev vid and first gap current video
+            # decide whether to delete last last or first gap or merge
+            num_frames_path_gap = self.paths[-1]['num_frames'] + vm.paths[0]['num_frames']
+            prev_video_last_x = self.paths[-2]['x_path'][-1]
+            prev_video_last_y = self.paths[-2]['y_path'][-1]
+            current_video_first_x = vm.paths[1]['x_path'][0]
+            current_video_first_y = vm.paths[1]['y_path'][0]
+            gap_data = self.calc_path_gap(num_frames_path_gap, prev_video_last_x, prev_video_last_y, current_video_first_x, current_video_first_y)
 
-                prev_video_last_x = last_x_path_prev_video[-1]
-                prev_video_last_y = last_y_path_prev_video[-1]
-                current_video_first_x = fist_x_path_current_video[0]
-                current_video_first_y = fist_y_path_current_video[0]
-                num_frames_path_gap = self.frame_nums_left_video_after_last_path_ends + vm.frame_num_first_path_starts
+            del self.paths[-1]
+            del vm.paths[0]
 
-                gap_data = self.calc_path_gap(num_frames_path_gap, prev_video_last_x, prev_video_last_y, current_video_first_x, current_video_first_y)
-                if gap_data['same_location_disappeared'] and num_frames_path_gap < constants.MAX_FRAME_GAP_BETWEEN_VIDEOS:
-                    generated_coord_gaps = gen_gap_coords(current_video_first_x, current_video_first_y, prev_video_last_x, prev_video_last_y, num_frames_path_gap)
-                    self.x_paths[-1].extend(generated_coord_gaps['x'])
-                    self.y_paths[-1].extend(generated_coord_gaps['y'])
-                    self.x_paths[-1].extend(vm.x_paths[0])
-                    self.y_paths[-1].extend(vm.y_paths[0])
-                    del vm.x_paths[0]
-                    del vm.y_paths[0]
-                else:
-                    self.path_gap_data.append(gap_data)
+            if gap_data['prev_next_path_same_loc_disappeared']:
+                generated_coord_gaps = gen_gap_coords(current_video_first_x, current_video_first_y, prev_video_last_x, prev_video_last_y, num_frames_path_gap)
+                self.paths[-1]['x_path'].extend(generated_coord_gaps['x'])
+                self.paths[-1]['y_path'].extend(generated_coord_gaps['y'])
+                self.paths[-1]['x_path'].extend(vm.paths[0]['x_path'])
+                self.paths[-1]['y_path'].extend(vm.paths[0]['y_path'])
+                self.paths[-1]['num_frames'] = len(self.paths[-1]['y_path'])
+            else:
+                self.paths.append(gap_data)
 
-        self.x_paths.extend(vm.x_paths)
-        self.y_paths.extend(vm.y_paths)
-        self.path_gap_data.extend(vm.path_gap_data)
-
-        self.frame_nums_left_video_after_last_path_ends = vm.frame_nums_left_video_after_last_path_ends
+            self.paths.extend(vm.paths)
 
     def add_paths_data(self, paths_data):
         num_paths = len(paths_data)
-        if num_paths > 0:
-            self.tag_class_seen = True
-        else:
+        if num_paths == 0:
+            entire_video_gap_data = {'is_gap': True, 'prev_next_path_same_loc_disappeared': False, 'num_frames': constants.NUM_FRAMES_IN_VIDEO}
+            self.paths.append(entire_video_gap_data)
             return None
+
+        start_frame_num = paths_data[0]['start_frame_num']
+        x_path = paths_data[0]['x_path']
+        y_path = paths_data[0]['y_path']
+        path_length = len(x_path)
+        path_end_frame_num = start_frame_num + path_length
+
+        start_video_gap_data = {'is_gap': True, 'prev_next_path_same_loc_disappeared': False, 'num_frames': start_frame_num - 1}
+        self.paths.append(start_video_gap_data)
 
         i = 0
         while i < num_paths:
@@ -90,45 +93,51 @@ class VideoMetrics:
                         path_length = len(x_path)
                         path_end_frame_num = start_frame_num + path_length
                 else:
-                    num_frames_path_gap = paths_data[ii]['start_frame_num'] - path_end_frame_num
-                    #print(len(x_path), len(paths_data[ii]['x_path']))
-                    gap_data = self.calc_path_gap(num_frames_path_gap, x_path[-1], y_path[-1], paths_data[ii]['x_path'][0], paths_data[ii]['y_path'][0])
-                    self.path_gap_data.append(gap_data)
                     break
 
                 ii += 1
 
-            self.frame_nums_left_video_after_last_path_ends = constants.NUM_FRAMES_IN_VIDEO - path_end_frame_num
-            self.x_paths.append(x_path)
-            self.y_paths.append(y_path)
-
-            if self.frame_num_first_path_starts is None:
-                self.frame_num_first_path_starts = start_frame_num
+            self.paths.append({'is_gap': False, 'x_path': x_path, 'y_path': y_path, 'num_frames': path_length})
+            if ii < num_paths:
+                num_frames_path_gap = paths_data[ii]['start_frame_num'] - path_end_frame_num
+                gap_data = self.calc_path_gap(num_frames_path_gap, x_path[-1], y_path[-1], paths_data[ii]['x_path'][0], paths_data[ii]['y_path'][0])
+                self.paths.append(gap_data)
 
             i = ii
 
+        end_video_gap_data = {'is_gap': True, 'prev_next_path_same_loc_disappeared': False, 'num_frames': constants.NUM_FRAMES_IN_VIDEO - path_end_frame_num - 1}
+        self.paths.append(end_video_gap_data)
+
     def calc_path_gap(self, num_frames_path_gap, prev_x, prev_y, new_x, new_y):
         distance = calc_distance(prev_x, prev_y, new_x, new_y)
-        same_location_disappeared = True
+        prev_next_path_same_loc_disappeared = True
         if distance > constants.DOUBLE_TAG_DIAMETER:
-            same_location_disappeared = False
+            prev_next_path_same_loc_disappeared = False
 
-        gap_data = {'prev_x': prev_x, 'prev_y': prev_y, 'new_x': new_x,
-                    'new_y': new_y, 'num_frames_path_gap': num_frames_path_gap,
-                    'distance_prev_new_coord': distance,
-                    'same_location_disappeared': same_location_disappeared,
-                    'absent_in_video': False}
+        gap_data = {'is_gap': True, 'prev_next_path_same_loc_disappeared': prev_next_path_same_loc_disappeared, 'num_frames': num_frames_path_gap}
         return gap_data
 
     def calc_metrics(self):
-        if not self.tag_class_seen:
-            return None
 
-        self.current_perimeter['start_coord'] = {'x': self.x_paths[0][0], 'y': self.y_paths[0][0]}
+        #if len(self.paths) < 2:
+            #return None
+        #else:
+        if self.paths[-1]['num_frames'] < 1:
+            del self.paths[-1]
 
-        for path_index in range(len(self.x_paths)):
-            x_path = self.x_paths[path_index]
-            y_path = self.y_paths[path_index]
+        for path_index in range(len(self.paths)):
+            if not self.paths[path_index]['is_gap']:
+                self.current_perimeter['start_coord'] = {'x': self.paths[path_index]['x_path'][0], 'y': self.paths[path_index]['y_path'][0]}
+
+        for path_index in range(len(self.paths)):
+            if self.paths[path_index]['is_gap']:
+                #double check later
+                motionless_data = {'seconds_motionless': -int(self.paths[path_index]['num_frames'] / 20.0)}
+                self.all_motionless_data.append(motionless_data)
+                continue
+
+            x_path = self.paths[path_index]['x_path']
+            y_path = self.paths[path_index]['y_path']
 
             frame_counter = 0
             for i in range(len(x_path)):
