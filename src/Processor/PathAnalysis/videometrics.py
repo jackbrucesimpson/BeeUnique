@@ -18,8 +18,6 @@ class VideoMetrics:
         self.cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless': {}}
 
     def merge_video_metrics(self, vm):
-        #print('num merged paths', len(self.paths))
-
         # entire video gap
         if len(vm.paths) == 1:
             if len(self.paths) == 0:

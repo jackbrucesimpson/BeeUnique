@@ -6,9 +6,9 @@ import numpy as np
 
 from videometrics import VideoMetrics
 from Processor.Utils.fileutils import read_all_processed_paths_files
-from Processor.Utils.imageutils import combine_night_day_bg, calc_distance, calc_distance, increment_dict_key_value
+from Processor.Utils.imageutils import combine_night_day_bg, calc_distance
 from Processor.Utils.splitdatatime import SplitDataTime
-from Processor.Utils.graphics import plot_heatmaps, plot_heatmaps_bg_image
+from Processor.Utils.graphics import plot_heatmaps_bg_image
 from Processor.Utils import constants
 
 class PathMetrics:
@@ -52,6 +52,9 @@ class PathMetrics:
             night_day_grouped_video_metrics = sdt_paths.sort_data_into_time_period()
             merged_night_day_grouped_video_metrics = self.merge_grouped_night_day_video_metrics(night_day_grouped_video_metrics)
             self.tag_class_night_day_metrics[tag_class] = merged_night_day_grouped_video_metrics
+
+            # delete to free up space
+            del self.tag_class_metrics_grouped_by_video[tag_class]
 
     def merge_grouped_night_day_video_metrics(self, night_day_grouped_video_metrics):
         merged_night_day_grouped_video_metrics = {'night': [], 'day': []}
