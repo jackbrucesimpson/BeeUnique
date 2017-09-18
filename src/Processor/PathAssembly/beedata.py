@@ -129,7 +129,7 @@ class BeeData:
                 if not current_prev_pred_same or is_unknown_path_section:
                     # covers case where there's gap or new class
                     prev_class_index = self.get_index_prev_class(i,  current_section_pred, self.consensus_grouped_classifications)
-                    self.class_path_end_index.append(prev_class_index * NUM_GROUP_CLASSIFICATIONS)
+                    self.class_path_end_index.append(prev_class_index * constants.NUM_GROUP_CLASSIFICATIONS)
                     if is_unknown_path_section:
                         self.classes_in_path.append(constants.UNKNOWN_CLASS)
                     else:
@@ -151,7 +151,7 @@ class BeeData:
             final_section = self.consensus_grouped_classifications[num_grouped_classifications-(num_concurrent_mixed_unknown*constants.NUM_GROUPS_IN_SECTION):num_grouped_classifications]
             current_section_pred = self.get_most_freq_class_pred(final_section)
             prev_class_index = self.get_index_prev_class(num_grouped_classifications-1,  current_section_pred, self.consensus_grouped_classifications)
-            self.class_path_end_index.append(prev_class_index * NUM_GROUP_CLASSIFICATIONS)
+            self.class_path_end_index.append(prev_class_index * constants.NUM_GROUP_CLASSIFICATIONS)
             self.classes_in_path.append(prev_classification)
 
             self.class_path_end_index.append(num_grouped_classifications * constants.NUM_GROUP_CLASSIFICATIONS)
