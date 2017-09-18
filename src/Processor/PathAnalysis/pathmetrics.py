@@ -27,8 +27,6 @@ class PathMetrics:
             tag_class_each_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys()}
             for bee_json in dt_bee_json['bees_json']:
                 tag_class = bee_json['tag_class']
-                if tag_class != constants.QUEEN_CLASS:######################################################################
-                    continue######################################################################################
                 for path_index in range(len(bee_json['start_frame_nums'])):
                     start_frame_num = bee_json['start_frame_nums'][path_index]
                     x_path = bee_json['x_paths'][path_index]
