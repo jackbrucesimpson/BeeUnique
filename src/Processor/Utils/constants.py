@@ -1,6 +1,10 @@
 
 
-TAG_CLASS_NAMES = {0: 'CircleLine', 1: 'Leaf', 2: 'Note1', 3: 'Unknown', 4: 'DD', 5: 'Peace', 6: 'Question', 7: 'Pillars', 8: 'HH', 9: 'Ampersand', 10: 'PP', 11: 'Hash', 12: 'Power', 13: 'Ankh', 14: 'TT', 15: 'Trident', 16: 'Asterisk', 17: '4', 18: 'Lines3', 19: '1', 20: '0', 21: '3', 22: 'Plane', 23: '5', 24: 'CircleHalf', 25: '7', 26: 'Sun', 27: '8', 28: 'Omega', 29: 'ArrowHollow', 30: 'AA', 31: 'Note2', 32: 'Radioactive', 33: 'EE', 34: 'UU', 35: '6', 36: 'Plant', 37: 'GG', 38: 'XX', 39: 'ZZ', 40: 'Necklace', 41: 'Umbrella', 42: 'Triangle', 43: 'Dot', 44: 'a', 45: 'Heart', 46: 'e', 47: 'RR', 48: 'KK', 49: 'h', 50: 'Queen', 51: 'Tadpole', 52: 'n', 53: 'MM', 54: '2', 55: 'r', 56: 'ArrowLine', 57: 'y', 58: 'Scissors', 59: 'CircleCross'}
+TAG_CLASS_NAMES = image_class_names = {0: 'CircleLine', 1: 'Sun', 2: 'Unknown', 3: 'Peace', 4: 'Pillars', 5: 'H', 6: 'Ampersand', 7: 'P',
+8: 'Hash', 9: 'R', 10: 'Ankh', 11: 'Trident', 12: 'Asterisk', 13: '4', 14: 'Lines3', 15: '1', 16: '0', 17: '3', 18: 'Plane', 19: '5',
+20: 'CircleHalf', 21: '7', 22: '6', 23: '8', 24: 'Omega', 25: 'ArrowHollow', 26: 'A', 27: 'Radioactive', 28: 'Heart', 29: 'E', 30: 'U',
+31: 'Plant', 32: 'G', 33: 'X', 34: 'Z', 35: 'Necklace', 36: 'Triangle', 37: 'Dot', 38: 'a', 39: 'Note', 40: 'e', 41: 'Power', 42: 'K', 43:
+'h', 44: 'Queen', 45: 'Tadpole', 46: 'M', 47: '2', 48: 'r', 49: 'ArrowLine', 50: 'y', 51: 'CircleCross'}
 
 #TAG_CLASS_NAMES = {50: 'Queen', 3: 'Unknown'}
 
@@ -22,7 +26,7 @@ TAG_DIAMETER = 30
 HALF_TAG_DIAMETER = int(TAG_DIAMETER / 2)
 DOUBLE_TAG_DIAMETER = int(TAG_DIAMETER * 2)
 PERIMETER_RADIUS = int(TAG_DIAMETER * 6)
-MIN_NUM_SECONDS_SPENT_IN_AREA = 10
+MIN_NUM_SECONDS_SPENT_IN_AREA = 30
 SECONDS_IN_45_MINS = 2700
 
 MAX_FRAME_GAP_BETWEEN_PATHS = 1 * FPS

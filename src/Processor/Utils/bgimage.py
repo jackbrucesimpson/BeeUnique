@@ -4,7 +4,7 @@ import numpy as np
 
 from fileutils import create_dir_check_exists
 
-class BGImage:
+class BGImage(object):
     def __init__(self, experiment_directory, video_filename):
         self.bg_image_dir = create_dir_check_exists(experiment_directory, 'background')
         self.video_filename = video_filename

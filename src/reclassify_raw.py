@@ -8,6 +8,7 @@ from Processor.Utils import constants
 
 def main():
     json_file_path = sys.argv[1]
+    print(json_file_path)
 
     bees_df = pd.read_json(json_file_path)
     bees_df['classifications'] = constants.UNKNOWN_CLASS

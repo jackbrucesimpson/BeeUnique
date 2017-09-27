@@ -2,7 +2,7 @@ from beedata import BeeData
 from Processor.Utils.imageutils import gen_gap_coords
 from Processor.Utils import constants
 
-class ProcessPaths:
+class ProcessPaths(object):
 
     def __init__(self):
         pass

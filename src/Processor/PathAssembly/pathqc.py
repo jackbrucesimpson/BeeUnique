@@ -5,7 +5,7 @@ from Processor.Utils.fileutils import create_dir_check_exists
 from Processor.Utils.graphics import plot_barplot
 from Processor.Utils import constants
 
-class PathQC:
+class PathQC(object):
     def __init__(self, video_datetime, experiment_directory):
         self.video_datetime = video_datetime
         self.experiment_directory = experiment_directory

@@ -1,18 +1,21 @@
 from Processor.Utils.imageutils import calc_distance, gen_gap_coords, increment_dict_key_value
 from Processor.Utils import constants
 
-class VideoMetrics:
+class VideoMetrics(object):
 
-    def __init__(self):
+    def __init__(self, tag_class):
+        self.tag_class = tag_class
+
         self.paths = []
 
-        self.current_window = {'yx_cell_coords': [], 'coords': [], 'start_coord': {'x': None, 'y': None}, 'seconds_motionless': 0}
+        self.current_window = {'yx_cell_coords': [], 'start_coord': {'x': None, 'y': None}, 'seconds_motionless': 0}
         self.current_perimeter = {'seconds_present': 0, 'yx_cell_coords': [], 'coords': [],
                                 'start_coord': {'x': None, 'y': None}, 'center_coord': {'x': None, 'y': None},
-                                'distances_per_second': [], 'motionless_data': []}
+                                'distances_per_second': [], 'activity_grouped_by_type': [], 'reappearance_data': []}
 
         self.all_distances_per_second_window = []
-        self.all_motionless_data = []
+        self.all_reappearance_data = []
+        self.all_activity_grouped_by_type = []
 
         self.all_perimeter_data = []
         self.cells_visited_speed_groups = {'all': {}, 'moving': {}, 'motionless': {}}
@@ -33,7 +36,7 @@ class VideoMetrics:
             self.paths.extend(vm.paths)
         else:
             # see amount of time in last gap prev vid and first gap current video
-            # decide whether to delete last last or first gap or merge
+            # decide whether to delete last or first gap or merge
             num_frames_path_gap = self.paths[-1]['num_frames'] + vm.paths[0]['num_frames']
             prev_video_last_x = self.paths[-2]['x_path'][-1]
             prev_video_last_y = self.paths[-2]['y_path'][-1]
@@ -41,16 +44,16 @@ class VideoMetrics:
             current_video_first_y = vm.paths[1]['y_path'][0]
             gap_data = self.calc_path_gap(num_frames_path_gap, prev_video_last_x, prev_video_last_y, current_video_first_x, current_video_first_y)
 
+            # delete gaps
             del self.paths[-1]
             del vm.paths[0]
 
             if gap_data['prev_next_path_same_loc_disappeared']:
                 generated_coord_gaps = gen_gap_coords(current_video_first_x, current_video_first_y, prev_video_last_x, prev_video_last_y, num_frames_path_gap)
-                self.paths[-1]['x_path'].extend(generated_coord_gaps['x'])
-                self.paths[-1]['y_path'].extend(generated_coord_gaps['y'])
-                self.paths[-1]['x_path'].extend(vm.paths[0]['x_path'])
-                self.paths[-1]['y_path'].extend(vm.paths[0]['y_path'])
-                self.paths[-1]['num_frames'] = len(self.paths[-1]['y_path'])
+                self.paths[-1]['x_path'].extend(generated_coord_gaps['x'] + vm.paths[0]['x_path'])
+                self.paths[-1]['y_path'].extend(generated_coord_gaps['y'] + vm.paths[0]['y_path'])
+                self.paths[-1]['num_frames'] = len(self.paths[-1]['x_path'])
+                del vm.paths[0]
             else:
                 self.paths.append(gap_data)
 
@@ -113,29 +116,36 @@ class VideoMetrics:
             prev_next_path_same_loc_disappeared = False
 
         gap_data = {'is_gap': True, 'prev_next_path_same_loc_disappeared': prev_next_path_same_loc_disappeared, 'num_frames': num_frames_path_gap}
+        if prev_next_path_same_loc_disappeared:
+            gap_data['x'] = new_x
+            gap_data['y'] = new_y
+
         return gap_data
 
     def calc_metrics(self):
-
-        #if len(self.paths) < 2:
-            #return None
-        #else:
+        # delete last gap if isn't required
         if self.paths[-1]['num_frames'] < 1:
             del self.paths[-1]
 
-        for path_index in range(len(self.paths)):
-            if not self.paths[path_index]['is_gap']:
-                self.current_perimeter['start_coord'] = {'x': self.paths[path_index]['x_path'][0], 'y': self.paths[path_index]['y_path'][0]}
+        reappearance_data = {'same_loc_disappeared': False, 'num_seconds': 0, 'x': None, 'y': None}
 
         for path_index in range(len(self.paths)):
             if self.paths[path_index]['is_gap']:
-                #double check later
-                motionless_data = {'seconds_motionless': -int(self.paths[path_index]['num_frames'] / 20.0)}
-                self.all_motionless_data.append(motionless_data)
+                absent_path = self.paths[path_index]
+                num_seconds = int(absent_path['num_frames'] / float(constants.FPS))
+                same_loc_disappeared = absent_path['prev_next_path_same_loc_disappeared']
+                self.all_activity_grouped_by_type.append({'activity': 'absent', 'num_seconds': num_seconds})
+                if same_loc_disappeared:
+                    reappearance_data = {'same_loc_disappeared': same_loc_disappeared, 'num_seconds': num_seconds, 'x': absent_path['x'], 'y': absent_path['y']}
+                    self.current_perimeter['reappearance_data'].append(reappearance_data)
+                    self.current_perimeter['seconds_present'] += num_seconds
+                    self.all_reappearance_data.append(reappearance_data)
                 continue
 
             x_path = self.paths[path_index]['x_path']
             y_path = self.paths[path_index]['y_path']
+            if self.current_perimeter['start_coord']['x'] is None:
+                self.current_perimeter['start_coord'] = {'x': x_path[0], 'y': y_path[0]}
 
             frame_counter = 0
             for i in range(len(x_path)):
@@ -148,10 +158,17 @@ class VideoMetrics:
                     self.current_window['start_coord'] = {'x': x, 'y': y}
                 if frame_counter % constants.FPS == 0:
                     window_distance = calc_distance(x, y, self.current_window['start_coord']['x'], self.current_window['start_coord']['y'])
-
                     perimeter_distance = calc_distance(x, y, self.current_perimeter['start_coord']['x'], self.current_perimeter['start_coord']['y'])
 
-                    self.speed_metrics(x, y, window_distance, perimeter_distance)
+                    if window_distance > constants.HALF_TAG_DIAMETER:
+                        self.window_metrics()
+                    else:
+                        self.current_window['seconds_motionless'] += 1
+                    if perimeter_distance > constants.PERIMETER_RADIUS:
+                        self.perimeter_metrics()
+                        self.current_perimeter['start_coord'] = {'x': x, 'y': y}
+                    else:
+                        self.current_perimeter['seconds_present'] += 1
 
                     self.all_distances_per_second_window.append(window_distance)
                     self.current_perimeter['distances_per_second'].append(window_distance)
@@ -160,46 +177,39 @@ class VideoMetrics:
 
                 self.current_window['yx_cell_coords'].append(yx_cell_coord)
                 self.current_perimeter['yx_cell_coords'].append(yx_cell_coord)
-
-                self.current_window['coords'].append({'x': x, 'y': y})
                 self.current_perimeter['coords'].append({'x': x, 'y': y})
 
             if self.current_window['seconds_motionless'] > 0:
-                self.speed_metrics(end_of_path=True)
+                self.window_metrics()
 
+        self.perimeter_metrics()
+
+    def window_metrics(self):
+        if self.current_window['seconds_motionless'] < 1:
+            speed_group = 'moving'
+        else:
+            speed_group = 'motionless'
+
+        for yx in self.current_window['yx_cell_coords']:
+            self.cells_visited_speed_groups[speed_group] = increment_dict_key_value(self.cells_visited_speed_groups[speed_group], yx)
+            self.cells_visited_speed_groups['all'] = increment_dict_key_value(self.cells_visited_speed_groups['all'], yx)
+
+        activity_data = {'activity': speed_group, 'num_seconds': self.current_window['seconds_motionless']}
+        self.all_activity_grouped_by_type.append(activity_data)
+        self.current_perimeter['activity_grouped_by_type'].append(activity_data)
+
+        self.current_window['yx_cell_coords'] = []
+        self.current_window['seconds_motionless'] = 0
+
+    def perimeter_metrics(self):
         if self.current_perimeter['seconds_present'] > constants.MIN_NUM_SECONDS_SPENT_IN_AREA:
             coord_center_index = int(len(self.current_perimeter['coords']) / 2)
             self.current_perimeter['center_coord'] = self.current_perimeter['coords'][coord_center_index]
             self.all_perimeter_data.append(self.current_perimeter)
 
-    def speed_metrics(self, x=None, y=None, window_distance=None, perimeter_distance=None, end_of_path=False):
-        if end_of_path or window_distance > constants.HALF_TAG_DIAMETER:
-            if self.current_window['seconds_motionless'] < 1:
-                speed_group = 'moving'
-            else:
-                speed_group = 'motionless'
-
-            for yx in self.current_window['yx_cell_coords']:
-                self.cells_visited_speed_groups[speed_group] = increment_dict_key_value(self.cells_visited_speed_groups[speed_group], yx)
-                self.cells_visited_speed_groups['all'] = increment_dict_key_value(self.cells_visited_speed_groups['all'], yx)
-
-            coord_center_index = int(len(self.current_window['coords']) / 2)
-            motionless_data = {'center_coord': self.current_window['coords'][coord_center_index], 'seconds_motionless': self.current_window['seconds_motionless']}
-            self.all_motionless_data.append(motionless_data)
-            self.current_perimeter['motionless_data'].append(motionless_data)
-
-            self.current_window = {'yx_cell_coords': [], 'coords': [], 'start_coord': {'x': x, 'y': y}, 'seconds_motionless': 0}
-
-        else:
-             self.current_window['seconds_motionless'] += 1
-
-        self.current_perimeter['seconds_present'] += 1
-        if not end_of_path and perimeter_distance > constants.PERIMETER_RADIUS and self.current_perimeter['seconds_present'] > constants.MIN_NUM_SECONDS_SPENT_IN_AREA:
-
-            coord_center_index = int(len(self.current_perimeter['coords']) / 2)
-            self.current_perimeter['center_coord'] = self.current_perimeter['coords'][coord_center_index]
-
-            self.all_perimeter_data.append(self.current_perimeter)
-            self.current_perimeter = {'seconds_present': 0, 'yx_cell_coords': [], 'coords': [],
-                                    'start_coord': {'x': x, 'y': y}, 'center_coord': {'x': None, 'y': None},
-                                    'distances_per_second': [], 'motionless_data': []}
+        self.current_perimeter['yx_cell_coords'] = []
+        self.current_perimeter['coords'] = []
+        self.current_perimeter['distances_per_second'] = []
+        self.current_perimeter['activity_grouped_by_type'] = []
+        self.current_perimeter['center_coord'] = {'x': None, 'y': None}
+        self.current_perimeter['reappearance_data'] = []

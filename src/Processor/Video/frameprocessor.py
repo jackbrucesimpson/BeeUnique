@@ -10,7 +10,7 @@ from pytrack import PyTrack
 from Processor.Utils.bgimage import BGImage
 from Processor.Utils import constants
 
-class FrameProcessor:
+class FrameProcessor(object):
     def __init__(self, video_path, output_directory, experiment_name, is_training, overwrite_raw, num_frames_batch_process, n_processes, chunksize):
         self.is_training = is_training
         self.experiment_directory = create_dir_check_exists(output_directory, experiment_name)

@@ -11,7 +11,7 @@ if sys.version_info >= (3, 0):
 else:
     from Queue import Queue
 
-class Stream:
+class Stream(object):
     def __init__(self, video_path, queue_size):
         self.video_stream = cv2.VideoCapture(video_path)
         self.is_streaming = True

@@ -78,3 +78,16 @@ def read_all_processed_paths_files(processed_paths_dir):
 
     sorted_video_dt_bees_json = sorted(video_dt_bees_json, key=lambda k: k['date_time'])
     return sorted_video_dt_bees_json
+
+def get_processed_paths_video_dt_json_filename(processed_paths_dir):
+    if processed_paths_dir[-1] != '/':
+        processed_paths_dir += '/'
+    json_file_list = glob.glob(processed_paths_dir + '*.json')
+
+    video_dt_bees_json_filename = []
+    for json_file in json_file_list:
+        video_date_time = get_video_datetime(json_file)
+        video_dt_bees_json_filename.append({'date_time': video_date_time, 'bees_json_filename': json_file})
+
+    sorted_video_dt_bees_json_filename = sorted(video_dt_bees_json_filename, key=lambda k: k['date_time'])
+    return sorted_video_dt_bees_json_filename

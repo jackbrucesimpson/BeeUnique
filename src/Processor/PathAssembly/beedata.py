@@ -2,7 +2,7 @@
 from Processor.Utils.imageutils import increment_dict_key_value
 from Processor.Utils import constants
 
-class BeeData:
+class BeeData(object):
 
     bee_id = 0
 

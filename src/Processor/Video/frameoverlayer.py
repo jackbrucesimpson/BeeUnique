@@ -6,7 +6,7 @@ import cv2
 from Processor.Utils.fileutils import convert_json_paths_to_df, read_json
 from Processor.Utils import constants
 
-class FrameOverlayer:
+class FrameOverlayer(object):
     def __init__(self, video_filename, experiment_directory, is_raw_coords_file, enhance_untagged_bees):
         self.enhance_untagged_bees = enhance_untagged_bees
         self.clahe = cv2.createCLAHE(clipLimit=10.0, tileGridSize=(13,13))

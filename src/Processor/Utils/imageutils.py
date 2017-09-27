@@ -7,8 +7,8 @@ import glob
 import numpy as np
 import uuid
 
-from splitdatatime import SplitDataTime
 from fileutils import create_dir_check_exists, get_video_datetime
+import constants
 
 def calc_distance(x1, y1, x2, y2):
     x_dist = (x2 - x1)
@@ -24,12 +24,12 @@ def increment_dict_key_value(class_dict, classification, num_increment=1):
 
 def output_df_tag_images(bees_df, experiment_dir_path, video_datetime, reduce_images, bee_ids_to_output_images=None):
     image_output_directory = create_dir_check_exists(experiment_dir_path, 'training_images')
-    file_image_output_directory = create_dir_check_exists(image_output_directory, video_datetime)
 
     grouped_bee_id = bees_df.groupby('bee_id')
     for bee_id, df_bee_id in grouped_bee_id:
         if bee_ids_to_output_images is not None and bee_id not in bee_ids_to_output_images:
             continue
+        file_image_output_directory = create_dir_check_exists(image_output_directory, video_datetime)
         output_training_images(bee_id, list(df_bee_id['frame_nums']), list(df_bee_id['flattened_28x28_tag_matrices']), \
                                 file_image_output_directory, reduce_images)
 
@@ -120,17 +120,66 @@ def segment_frame(counter_frame):
 
     return frame_data
 
+def gen_gap_coords(x1, y1, x2, y2, difference_prev_frame):
+    x_diff_per_frame = (x2 - x1) / float(difference_prev_frame)
+    y_diff_per_frame = (y2 - y1) / float(difference_prev_frame)
+
+    gap_coords = {'x': [], 'y': []}
+    for gap in range(1, difference_prev_frame + 1):
+        x_gap_coord = x2 - x_diff_per_frame * gap
+        y_gap_coord = y2 - y_diff_per_frame * gap
+        gap_coords['x'].append(x_gap_coord)
+        gap_coords['y'].append(y_gap_coord)
+
+    return gap_coords
+
+def sort_data_into_time_period(video_dt_data):
+    video_dt_data_sorted = sorted(video_dt_data, key=lambda k: k['date_time'])
+
+    is_night = True
+    constants.NIGHT_HOURS = [19, 20, 21, 22, 23, 0, 1, 2, 3, 4, 5, 6]
+
+    current_data_list = []
+    night_data_lists = []
+    day_data_lists = []
+    for dt_data in video_dt_data_sorted:
+        hour = dt_data['date_time'].hour
+        hour_data = dt_data['data']
+        if is_night:
+            if hour in constants.NIGHT_HOURS:
+                current_data_list.append(hour_data)
+            else:
+                night_data_lists.append(current_data_list)
+                current_data_list = [hour_data]
+                is_night = False
+        else:
+            if hour not in constants.NIGHT_HOURS:
+                current_data_list.append(hour_data)
+            else:
+                day_data_lists.append(current_data_list)
+                current_data_list = [hour_data]
+                is_night = True
+
+    if len(current_data_list) > 0:
+        if is_night:
+            night_data_lists.append(current_data_list)
+        else:
+            day_data_lists.append(current_data_list)
+        current_data_list = []
+
+    return {'night': night_data_lists, 'day': day_data_lists}
+
 def combine_night_day_bg(image_directory_path, averaged_img_directory=None, output_image_files=False):
     if image_directory_path[-1] != '/':
         image_directory_path += '/'
 
-    sdt = SplitDataTime()
+    video_dt_data = []
     for bg_image_file in glob.glob(image_directory_path + '*.png'):
         image = cv2.imread(bg_image_file, cv2.IMREAD_GRAYSCALE)
         video_dt = get_video_datetime(bg_image_file)
-        sdt.add_date_time_data(video_dt, image)
+        video_dt_data.append({'date_time': video_dt, 'data': image})
 
-    night_day_data_lists = sdt.sort_data_into_time_period()
+    night_day_data_lists = sort_data_into_time_period(video_dt_data)
     night_day_images = {'night': [], 'day': []}
     for night_or_day in night_day_data_lists.keys():
         night_or_day_count = 0
@@ -151,16 +200,3 @@ def combine_night_day_bg(image_directory_path, averaged_img_directory=None, outp
                 night_or_day_count += 1
 
     return night_day_images
-
-def gen_gap_coords(x1, y1, x2, y2, difference_prev_frame):
-    x_diff_per_frame = (x2 - x1) / float(difference_prev_frame)
-    y_diff_per_frame = (y2 - y1) / float(difference_prev_frame)
-
-    gap_coords = {'x': [], 'y': []}
-    for gap in range(1, difference_prev_frame + 1):
-        x_gap_coord = x2 - x_diff_per_frame * gap
-        y_gap_coord = y2 - y_diff_per_frame * gap
-        gap_coords['x'].append(x_gap_coord)
-        gap_coords['y'].append(y_gap_coord)
-
-    return gap_coords

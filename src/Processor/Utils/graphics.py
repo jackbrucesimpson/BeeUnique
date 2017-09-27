@@ -22,9 +22,9 @@ def plot_barplot(list_values, list_values_names, file_name, title, xtitle, ytitl
     plt.clf()
     plt.close()
 
-def plot_seconds_of_activity(seconds_of_activity, dividing_lines, file_name):
+def plot_seconds_of_activity(seconds_activity, dividing_lines, file_name):
     num_y_cells = 1
-    num_x_cells = sum([abs(s) for s in seconds_of_activity])
+    num_x_cells = sum([a['num_seconds'] for a in seconds_activity])
     seconds_array = np.zeros((num_y_cells, num_x_cells, 3), dtype=np.uint8)
 
     absent_blue_color = (65, 105, 225)
@@ -32,17 +32,17 @@ def plot_seconds_of_activity(seconds_of_activity, dividing_lines, file_name):
     motionless_red_color = (205, 92, 92)
 
     seconds_index = 0
-    for s in seconds_of_activity:
-        if s < 0:
-            width = abs(s)
+    for a in seconds_activity:
+        if a['activity'] == 'absent':
+            width = a['num_seconds']
             seconds_array[0:num_y_cells, seconds_index:seconds_index + width] = absent_blue_color
             seconds_index += width
-        elif s == 0 or s == 1:
+        elif a['activity'] == 'moving':
             width = 1
             seconds_array[0:num_y_cells, seconds_index:seconds_index + width] = moving_black_color
             seconds_index += width
         else:
-            width = s
+            width = a['num_seconds']
             seconds_array[0:num_y_cells, seconds_index:seconds_index + width] = motionless_red_color
             seconds_index += width
 

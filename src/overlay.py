@@ -20,7 +20,7 @@ def main():
 
     if create_video:
         fourcc = cv2.cv.CV_FOURCC('X','V','I','D')#cv2.cv.CV_FOURCC(*'mp4v')
-        out = cv2.VideoWriter(output_video_file, fourcc, fps=20.0, frameSize=(3840, 2160), isColor=True)
+        out = cv2.VideoWriter(output_video_file, fourcc, fps=100.0, frameSize=(3840, 2160), isColor=True)
 
     stream = Stream(video_path=video_path, queue_size=num_frames_thread_queue).start()
     fo = FrameOverlayer(video_filename, experiment_directory, is_raw_coords_file, enhance_untagged_bees)
