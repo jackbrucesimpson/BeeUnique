@@ -24,8 +24,8 @@ class PathMetrics(object):
         self.group_all_data_by_tag_class(video_dt_json_filename)
 
     def group_all_data_by_tag_class(self, video_dt_json_filename):
-        #tag_class_metrics_grouped_by_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys() if tag_class != constants.UNKNOWN_CLASS}
-        tag_class_metrics_grouped_by_video = {constants.QUEEN_CLASS: []}
+        tag_class_metrics_grouped_by_video = {tag_class: [] for tag_class in constants.TAG_CLASS_NAMES.keys() if tag_class != constants.UNKNOWN_CLASS}
+        #tag_class_metrics_grouped_by_video = {constants.QUEEN_CLASS: []}
 
         for dt_bee_json_filename in video_dt_json_filename:
             print('Processed', dt_bee_json_filename['date_time'])
@@ -35,8 +35,8 @@ class PathMetrics(object):
             bees_json = read_json(dt_bee_json_filename['bees_json_filename'])
             for bee_json in bees_json:
                 tag_class = bee_json['tag_class']
-                if tag_class != constants.QUEEN_CLASS:
-                    continue
+                #if tag_class != constants.QUEEN_CLASS:
+                    #continue
                 if tag_class == constants.UNKNOWN_CLASS:
                     continue
 

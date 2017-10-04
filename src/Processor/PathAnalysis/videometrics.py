@@ -9,9 +9,8 @@ class VideoMetrics(object):
         self.paths = []
 
         self.current_window = {'yx_cell_coords': [], 'start_coord': {'x': None, 'y': None}, 'seconds_motionless': 0}
-        self.current_perimeter = {'seconds_present': 0, 'yx_cell_coords': [], 'coords': [],
-                                'start_coord': {'x': None, 'y': None}, 'center_coord': {'x': None, 'y': None},
-                                'distances_per_second': [], 'activity_grouped_by_type': [], 'reappearance_data': []}
+        self.current_perimeter = {'seconds_present': 0, 'start_coord': {'x': None, 'y': None}, 'center_coord': {'x': None, 'y': None},
+                                'coords': [], 'distances_per_second': [], 'reappearance_data': []}
 
         self.all_distances_per_second_window = []
         self.all_reappearance_data = []
@@ -135,6 +134,7 @@ class VideoMetrics(object):
                 num_seconds = int(absent_path['num_frames'] / float(constants.FPS))
                 same_loc_disappeared = absent_path['prev_next_path_same_loc_disappeared']
                 self.all_activity_grouped_by_type.append({'activity': 'absent', 'num_seconds': num_seconds})
+
                 if same_loc_disappeared:
                     reappearance_data = {'same_loc_disappeared': same_loc_disappeared, 'num_seconds': num_seconds, 'x': absent_path['x'], 'y': absent_path['y']}
                     self.current_perimeter['reappearance_data'].append(reappearance_data)
@@ -160,10 +160,6 @@ class VideoMetrics(object):
                     window_distance = calc_distance(x, y, self.current_window['start_coord']['x'], self.current_window['start_coord']['y'])
                     perimeter_distance = calc_distance(x, y, self.current_perimeter['start_coord']['x'], self.current_perimeter['start_coord']['y'])
 
-                    if window_distance > constants.HALF_TAG_DIAMETER:
-                        self.window_metrics()
-                    else:
-                        self.current_window['seconds_motionless'] += 1
                     if perimeter_distance > constants.PERIMETER_RADIUS:
                         self.perimeter_metrics()
                         self.current_perimeter['start_coord'] = {'x': x, 'y': y}
@@ -173,10 +169,14 @@ class VideoMetrics(object):
                     self.all_distances_per_second_window.append(window_distance)
                     self.current_perimeter['distances_per_second'].append(window_distance)
 
+                    if window_distance > constants.HALF_TAG_DIAMETER:
+                        self.window_metrics()
+                    else:
+                        self.current_window['seconds_motionless'] += 1
+
                     frame_counter = 0
 
                 self.current_window['yx_cell_coords'].append(yx_cell_coord)
-                self.current_perimeter['yx_cell_coords'].append(yx_cell_coord)
                 self.current_perimeter['coords'].append({'x': x, 'y': y})
 
             if self.current_window['seconds_motionless'] > 0:
@@ -196,7 +196,6 @@ class VideoMetrics(object):
 
         activity_data = {'activity': speed_group, 'num_seconds': self.current_window['seconds_motionless']}
         self.all_activity_grouped_by_type.append(activity_data)
-        self.current_perimeter['activity_grouped_by_type'].append(activity_data)
 
         self.current_window['yx_cell_coords'] = []
         self.current_window['seconds_motionless'] = 0
@@ -207,9 +206,5 @@ class VideoMetrics(object):
             self.current_perimeter['center_coord'] = self.current_perimeter['coords'][coord_center_index]
             self.all_perimeter_data.append(self.current_perimeter)
 
-        self.current_perimeter['yx_cell_coords'] = []
-        self.current_perimeter['coords'] = []
-        self.current_perimeter['distances_per_second'] = []
-        self.current_perimeter['activity_grouped_by_type'] = []
-        self.current_perimeter['center_coord'] = {'x': None, 'y': None}
-        self.current_perimeter['reappearance_data'] = []
+        self.current_perimeter = {'seconds_present': 0, 'start_coord': {'x': None, 'y': None}, 'center_coord': {'x': None, 'y': None},
+                                'coords': [], 'distances_per_second': [], 'reappearance_data': []}

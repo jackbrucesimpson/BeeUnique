@@ -22,29 +22,43 @@ def plot_barplot(list_values, list_values_names, file_name, title, xtitle, ytitl
     plt.clf()
     plt.close()
 
-def plot_seconds_of_activity(seconds_activity, dividing_lines, file_name):
-    num_y_cells = 1
-    num_x_cells = sum([a['num_seconds'] for a in seconds_activity])
+def plot_seconds_of_activity(seconds_activity, file_name):
+    num_y_cells = 2
+    num_x_cells = sum([a['num_seconds'] if a['num_seconds'] > 0 else 1 for a in seconds_activity])
     seconds_array = np.zeros((num_y_cells, num_x_cells, 3), dtype=np.uint8)
 
     absent_blue_color = (65, 105, 225)
     moving_black_color = (0, 0, 0)
     motionless_red_color = (205, 92, 92)
+    filler_grey_color = (128,128,128)
 
     seconds_index = 0
     for a in seconds_activity:
-        if a['activity'] == 'absent':
+        if a['activity'] == 'filler':
             width = a['num_seconds']
-            seconds_array[0:num_y_cells, seconds_index:seconds_index + width] = absent_blue_color
+            seconds_array[0, seconds_index:seconds_index + width] = filler_grey_color
+            seconds_index += width
+        elif a['activity'] == 'absent':
+            width = a['num_seconds']
+            seconds_array[0, seconds_index:seconds_index + width] = absent_blue_color
             seconds_index += width
         elif a['activity'] == 'moving':
             width = 1
-            seconds_array[0:num_y_cells, seconds_index:seconds_index + width] = moving_black_color
+            seconds_array[0, seconds_index:seconds_index + width] = moving_black_color
             seconds_index += width
         else:
             width = a['num_seconds']
-            seconds_array[0:num_y_cells, seconds_index:seconds_index + width] = motionless_red_color
+            seconds_array[0, seconds_index:seconds_index + width] = motionless_red_color
             seconds_index += width
+
+    is_night = True
+    for i in np.arange(1, num_x_cells, 43200):
+        if is_night:
+            seconds_array[1, i:i+43200] = (51, 153, 255)
+            is_night = False
+        else:
+            seconds_array[1, i:i+43200] = (255,255,102)
+            is_night = True
 
     plt.figure(figsize=(100,10))
     plt.imshow(seconds_array, extent=[0, num_x_cells, 0, 1], aspect='auto')
@@ -57,10 +71,16 @@ def plot_seconds_of_activity(seconds_activity, dividing_lines, file_name):
 
         #print(seconds_index)
 
-    for xc in dividing_lines:
-        plt.axvline(x=xc, linewidth=5, color='white', alpha=0.5)
 
-    plt.axis('off')
+    #for xc in np.arange(0, num_x_cells, 43200):
+        #plt.axvline(x=xc, ymin=-1, linewidth=1, color='green', alpha=1)
+
+
+
+    #plt.axis('off')
+    plt.yticks([])
+    plt.xticks(np.arange(21600, num_x_cells, 43200), ['Night' if i%2==0 else 'Day' for i in range(len(np.arange(0, num_x_cells, 43200)))])
+    #plt.set_xticklabels()
 
     #plt.ylim(0,10)
     #plt.xlim(0,10)
@@ -85,10 +105,11 @@ def plot_seconds_of_activity(seconds_activity, dividing_lines, file_name):
     #plt.close()
 
 
-def plot_path_bg(x_paths, y_paths, bg_image, file_name):
+def plot_path_bg(x_path, y_path, bg_image, file_name):
     plt.figure(figsize=(20,16))
-    for i in range(len(x_paths)):
-        plt.plot(x_paths[i], y_paths[i], alpha=0.2, color='r')
+    plt.plot(x_path, y_path, alpha=0.8, color='orange', linewidth=2, marker='o', linestyle='-')
+    #for i in range(len(x_paths)):
+        #plt.plot(x_paths[i], y_paths[i], alpha=0.5, color='r', marker='o', linestyle='--')
     plt.imshow(bg_image, cmap=cm.Greys_r)
     plt.axis('off')
     plt.savefig(file_name, dpi=100)
@@ -143,6 +164,16 @@ def plot_histogram(list_of_values, title, file_name):
     plt.hist(list_of_values, bins=100)
     plt.xlabel("Values")
     plt.ylabel("Frequency")
+    plt.title(title)
+    plt.savefig(file_name)
+    plt.clf()
+    plt.close()
+
+def plot_scatter(x, y, title, x_title, y_title, file_name):
+    plt.figure(figsize=(20,16))
+    plt.scatter(x, y)
+    plt.xlabel(x_title)
+    plt.ylabel(y_title)
     plt.title(title)
     plt.savefig(file_name)
     plt.clf()
