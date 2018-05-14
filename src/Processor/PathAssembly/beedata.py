@@ -36,7 +36,7 @@ class BeeData(object):
         else:
             section_count_dict = {constants.MIXED_CLASS: 0, constants.UNKNOWN_CLASS: 0}
             for classification in section_classifications:
-                section_count_dict = increment_dict_key_value(section_count_dict, classification)
+                increment_dict_key_value(section_count_dict, classification)
 
             del section_count_dict[constants.MIXED_CLASS]
             del section_count_dict[constants.UNKNOWN_CLASS]
@@ -51,7 +51,7 @@ class BeeData(object):
 
     def add_classification(self, classification):
         self.num_classifications_in_group += 1
-        self.class_counts_path = increment_dict_key_value(self.class_counts_path, classification)
+        increment_dict_key_value(self.class_counts_path, classification)
 
         if self.num_classifications_in_group == constants.NUM_GROUP_CLASSIFICATIONS:
             self.identify_freq_class_path_group()

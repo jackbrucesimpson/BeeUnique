@@ -15,12 +15,11 @@ def calc_distance(x1, y1, x2, y2):
     y_dist = (y2 - y1)
     return math.sqrt(x_dist * x_dist + y_dist * y_dist)
 
-def increment_dict_key_value(class_dict, classification, num_increment=1):
-    if classification in class_dict.keys():
-        class_dict[classification] += num_increment
+def increment_dict_key_value(dict_counter, key, num_increment=1):
+    if key in dict_counter.keys():
+        dict_counter[key] += num_increment
     else:
-        class_dict[classification] = num_increment
-    return class_dict
+        dict_counter[key] = num_increment
 
 def output_df_tag_images(bees_df, experiment_dir_path, video_datetime, reduce_images, bee_ids_to_output_images=None):
     image_output_directory = create_dir_check_exists(experiment_dir_path, 'training_images')

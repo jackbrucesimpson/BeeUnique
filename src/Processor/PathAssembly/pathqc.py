@@ -27,8 +27,7 @@ class PathQC(object):
         bee_path_classes_num_frames_tracked = self.get_class_num_frames_tracked(bee_paths_list_broken_up_by_class)
 
         for bee_path_class in bee_path_classes_num_frames_tracked:
-            self.class_num_frames_tracked_dict = increment_dict_key_value(self.class_num_frames_tracked_dict, \
-                                            bee_path_class['tag_class'], bee_path_class['num_frames_tracked'])
+            increment_dict_key_value(self.class_num_frames_tracked_dict, bee_path_class['tag_class'], bee_path_class['num_frames_tracked'])
 
             if bee_path_class['tag_class'] == constants.UNKNOWN_CLASS:
                 if bee_path_class['num_frames_tracked'] > constants.NUM_UNKNOWNS_IN_PATH_THRESHOLD:
