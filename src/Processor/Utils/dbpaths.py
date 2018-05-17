@@ -148,7 +148,7 @@ def merge_video_paths(merged_video_paths, video_paths):
 def calc_path_gap(num_frames_path_gap, prev_x, prev_y, new_x, new_y):
     distance = calc_distance(prev_x, prev_y, new_x, new_y)
     prev_next_path_same_loc_disappeared = True
-    if distance > constants.DOUBLE_TAG_DIAMETER:
+    if distance > constants.TRIPLE_TAG_DIAMETER:
         prev_next_path_same_loc_disappeared = False
 
     gap_data = {'is_gap': True, 'prev_next_path_same_loc_disappeared': prev_next_path_same_loc_disappeared, 'num_frames': num_frames_path_gap}
