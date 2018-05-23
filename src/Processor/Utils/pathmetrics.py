@@ -93,7 +93,7 @@ def calc_path_metrics(night_day_time_period_paths, tag_class):
 def window_metrics(current_window, cells_visited_speed_groups, all_activity_grouped_by_type):
     if current_window['seconds_motionless'] < 1:
         speed_group = 'moving'
-        all_activity_grouped_by_type.append({'activity': speed_group})
+        all_activity_grouped_by_type.append({'activity': speed_group, 'num_seconds': current_window['seconds_motionless']})
     else:
         speed_group = 'motionless'
         all_activity_grouped_by_type.append({'activity': speed_group, 'num_seconds': current_window['seconds_motionless']})
